@@ -1,5 +1,6 @@
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
@@ -7,13 +8,19 @@
     var socket = io();
     socket.emit('createRoom', {username: 'Player 1'});
     socket.on('log', function (log) {
-      $('div').html(log);
+      $('#log').html(log);
     });
   });
 </script>
 </head>
 <body>
-  <div>
+  <div id="menu">
+    <input type="text" name="name" placeholder="name">
+    <button type="button" id="start-game">Start New Game</button>
+    <input type="text" name="room_key" placeholder="Key">
+    <button type="button" id="join-game">Join Game</button>
+  </div>
+  <div id="log">
   </div>
 </body>
 </html>

@@ -14,12 +14,12 @@ module.exports = class Room {
 
 	startTimer (intervalCallback, endTimeCallback) {
 		this.endtime = false;
-		var countDownDate = new Date(new Date().getTime() + .1*60000);
+		var countDownDate = new Date(new Date().getTime() + .1*50000);
 
 		var x = setInterval(function() {
 			var now = new Date().getTime();
 			var distance = countDownDate - now;
-			var seconds = Math.floor(distance / 1000);
+			var seconds = Math.ceil(distance / 1000);
 			intervalCallback(seconds);
 			if (distance <= 0) {
 				clearInterval(x);
