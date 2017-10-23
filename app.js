@@ -38,12 +38,12 @@ io.sockets.on('connection', function (socket) {
 	let roomId;
 
 	socket.on('createRoom', function (userInfo) {
-		socket.user = userInfo.username;
+		socket.username = userInfo.username;
 		roomId = generateUniqueString(5);
 		gamerooms[roomId] = new Room(roomId);
 		socket.emit('roomId', roomId);
 		socket.join(roomId);
-		gamerooms[roomId].players[socket.user] = new Player(socket.user);
+		gamerooms[roomId].players[socket.username] = new Player(socket.username);
 		gamerooms[roomId].startTimer(function (seconds) {
 			socket.emit('log', seconds);
 		}, function () {
@@ -59,16 +59,16 @@ io.sockets.on('connection', function (socket) {
 	 */
 	socket.on('joinRoom', function (userInfo) {
 		socket.join(userInfo.roomId);
-		socket.user = userInfo.username;
+		socket.username = userInfo.username;
 		if(userInfo.roomId in gamerooms) {
-			if(socket.user in gamerooms[userInfo.room].players) {
+			if(socket.username in gamerooms[userInfo.room].players) {
 				//player already exists
 			} else {
 				roomId = userInfo.roomId;
-				gamerooms[roomId].players[socket.user] = new Player(socket.user);
+				gamerooms[roomId].players[socket.username] = new Player(socket.username);
 			}
-			socket.emit('roomMsg', 'Thanks for connecting ' + socket.user + ' :)');
-			socket.broadcast.to(userInfo.roomId).emit('roomMsg', socket.user + ' has connected, be nice'); //broadcasts to all sockets in the given room, except to the socket on which it was called
+			socket.emit('roomMsg', 'Thanks for connecting ' + socket.username + ' :)');
+			socket.broadcast.to(userInfo.roomId).emit('roomMsg', socket.username + ' has connected, be nice'); //broadcasts to all sockets in the given room, except to the socket on which it was called
 			io.sockets.in(userInfo.roomId).emit('updateUsers', gamerooms[userInfo.roomId].players); //broadcasts to all sockets in the given room
 		} else {
 			//room doesn't exist
@@ -83,7 +83,7 @@ io.sockets.on('connection', function (socket) {
 	 */
 	socket.on('sendMsg', function (msg) {
 		try {
-			io.sockets.in(msg.roomId).emit('updateChat', socket.user, msg.roomId, msg.message);
+			io.sockets.in(msg.roomId).emit('updateChat', socket.username, msg.roomId, msg.message);
 		} catch (e) {
 			console.log("ERROR " + e.message);
 		}
@@ -99,14 +99,14 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('disconnect', function () {
 		if(roomId && gamerooms[roomId]) {
-			gamerooms[roomId].players[socket.user].numConnections -= 1;
-			if(gamerooms[roomId].players[socket.user].numConnections <= 0) {
-				delete gamerooms[roomId].players[socket.user];
+			gamerooms[roomId].players[socket.username].numConnections -= 1;
+			if(gamerooms[roomId].players[socket.username].numConnections <= 0) {
+				delete gamerooms[roomId].players[socket.username];
 				if(isEmpty(gamerooms[roomId].players))
 					delete gamerooms[roomId];
 				else {
 					io.sockets.in(roomId).emit('updateUsers', gamerooms[roomId].players);
-					socket.broadcast.to(roomId).emit('roomMsg', socket.user + 'has disconnected.');
+					socket.broadcast.to(roomId).emit('roomMsg', socket.username + 'has disconnected.');
 				}
 			}
 		}
