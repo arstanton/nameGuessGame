@@ -13,10 +13,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "vue": "^2.5.2",
     "express": "4.16.1",
     "random-id": "0.0.2",
-    "socket.io": "2.0.3"
+    "socket.io": "2.0.3",
+    "vue": "^2.5.2",
+    "vue-socket.io": "2.1.1-a"
   },
   "devDependencies": {
     "gulp": "3.9.1",

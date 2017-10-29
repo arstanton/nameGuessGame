@@ -1,18 +1,32 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <div v-if="!loggedIn" id="login_menu">
+      <input type="text" v-model="username" placeholder="Name">
+      <input type="text" v-model="roomkey" placeholder="Key">
+      <button @click="loggedIn = true" :disabled="!username">{{ roomkey ? 'Join Game' : 'Start New Game' }}</button>
+    </div>
+    <GameRoom v-if="loggedIn"
+      :username="username"
+      :roomkey="roomkey"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import GameRoom from './components/GameRoom';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
-  }
+    GameRoom,
+  },
+  data() {
+    return {
+      username: '',
+      roomkey: '',
+      loggedIn: false,
+    };
+  },
 }
 </script>
 
