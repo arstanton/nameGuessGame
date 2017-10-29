@@ -1,37 +1,56 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>nameGuessGame</title>
-  <link rel="stylesheet" type="text/css" href="/css/main.css">
+  <head>
+    <title>DAS</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+<body>
+  <ul id="messages"></ul>
+  <form action="">
+    <input id="m" autocomplete="off" />
+    <button>Send</button>
+  </form>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
-  $(function () {
-    var socket = io();
-    socket.emit('createRoom', {username: 'Player 1'});
-    socket.on('log', function (log) {
-      $('#log').html(log);
-    });
-  });
-  </script>
-</head>
-<body>
-  <div id="app"></div>
-  <!-- built files will be auto injected -->
+    $(function () {
+      var socket = io();
+      socket.emit('createRoom', {username: 'Player 1'});
 
-  <div id="login_menu">
-    <input type="text" id="username" name="name" placeholder="name">
-    <button id="start_new_game">Start New Game</button>
-    <input type="text" id="room_key" name="room_key" placeholder="Key">
-    <button id="join_game">Join Game</button>
-  </div>
-  <div id="lobby">
-    <div id="players">
-    </div>
-    <button id="start_game">Start Game</button>
-  </div>
-  <div id="log">
-  </div>
+      socket.on('connected', function(c) {
+        $('#messages').append($('<li>').text(c));
+      });
+      
+      socket.on('disconnected', function(c) {
+        $('#messages').append($('<li>').text(c));
+      });
+
+      socket.on('playerName', function(c) {
+        $('#messages').append($('<li>').text(c));
+      });
+
+      $('form').submit(function(){
+        socket.emit('message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+
+      socket.on('message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+
+      socket.on('log', function (log) {
+        $('div').html(log);
+      });
+    });
+  </script>
 </body>
 </html>
