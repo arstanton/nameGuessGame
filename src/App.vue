@@ -2,12 +2,13 @@
   <div id="app">
     <div v-if="!loggedIn" id="login_menu">
       <input type="text" v-model="username" placeholder="Name">
-      <input type="text" v-model="roomkey" placeholder="Key">
-      <button @click="loggedIn = true" :disabled="!username">{{ roomkey ? 'Join Game' : 'Start New Game' }}</button>
+      <input type="text" v-model="roomId" placeholder="Room Key">
+      <button v-if="!roomId" @click="createRoom" :disabled="!username">Start New Game</button>
+      <button v-else @click="joinRoom" :disabled="!username">Join Game</button>
     </div>
     <GameRoom v-if="loggedIn"
       :username="username"
-      :roomkey="roomkey"
+      :room-id="roomId"
     />
   </div>
 </template>
@@ -23,9 +24,23 @@ export default {
   data() {
     return {
       username: '',
-      roomkey: '',
+      roomId: '',
       loggedIn: false,
     };
+  },
+  methods: {
+    createRoom() {
+      this.$socket.emit('createRoom', {username: this.username});
+    },
+    joinRoom() {
+      this.$socket.emit('joinRoom', {roomId: this.roomId, username: this.username});
+    },
+  },
+  sockets: {
+    roomId(r) {
+      this.roomId = r;
+      this.loggedIn = true;
+    },
   },
 }
 </script>
@@ -38,5 +53,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+#login_menu {
+  margin: 0 auto;
+  width: 600px;
 }
 </style>

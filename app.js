@@ -61,12 +61,13 @@ io.sockets.on('connection', function (socket) {
 		socket.join(userInfo.roomId);
 		socket.username = userInfo.username;
 		if(userInfo.roomId in gamerooms) {
-			if(socket.username in gamerooms[userInfo.room].players) {
+			if(socket.username in gamerooms[userInfo.roomId].players) {
 				//player already exists
 			} else {
 				roomId = userInfo.roomId;
 				gamerooms[roomId].players[socket.username] = new Player(socket.username);
 			}
+			socket.emit('roomId', userInfo.roomId);
 			socket.emit('roomMsg', 'Thanks for connecting ' + socket.username + ' :)');
 			socket.broadcast.to(userInfo.roomId).emit('roomMsg', socket.username + ' has connected, be nice'); //broadcasts to all sockets in the given room, except to the socket on which it was called
 			io.sockets.in(userInfo.roomId).emit('updateUsers', gamerooms[userInfo.roomId].players); //broadcasts to all sockets in the given room
@@ -81,9 +82,9 @@ io.sockets.on('connection', function (socket) {
 	 * @param string $message
 	 *
 	 */
-	socket.on('sendMsg', function (msg) {
+	socket.on('sendMessage', function (msg) {
 		try {
-			io.sockets.in(msg.roomId).emit('updateChat', socket.username, msg.roomId, msg.message);
+			io.sockets.in(msg.roomId).emit('updateChat', {username: socket.username, message: msg.message});
 		} catch (e) {
 			console.log("ERROR " + e.message);
 		}

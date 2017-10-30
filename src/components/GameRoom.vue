@@ -1,46 +1,31 @@
 <template>
-  <div id="message_box">
-    <ul id="messages">
-      <li v-for="m in messages">
-        {{ m }}
-      </li>
-    </ul>
-    <input id="m" autocomplete="off" />
-    <button>Send</button>
+  <div id="game_room">
+    <MessageBox v-if="roomId !== ''"
+      :room-id="roomId"
+    />
   </div>
 </template>
 
 <script>
+import MessageBox from './MessageBox';
+
 export default {
   name: 'GameRoom',
+  components: {
+    MessageBox,
+  },
   props: {
     username: String,
-    roomkey: String,
-  },
-  mounted() {
-    let username = this.username;
-    if (this.roomkey === '')
-      this.$socket.emit('createRoom', {username});
+    roomId: String,
   },
   data() {
     return {
-      messages: new Array(),
+      players: new Array(),
     };
-  },
-  sockets: {
-    log(log) {
-      this.messages.push(log);
-    },
   },
 }
 </script>
 
 <style scoped>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-  form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-  #messages { list-style-type: none; margin: 0; padding: 0; }
-  #messages li { padding: 5px 10px; }
-  #messages li:nth-child(odd) { background: #eee; }
+  
 </style>
