@@ -5,8 +5,10 @@
         <b>{{ m.username }}:</b> {{ m.message }}
       </li>
     </ul>
-    <input autocomplete="off" v-model="message"/>
-    <button @click="sendMessage">Send</button>
+    <form onsubmit="return false">
+      <input autocomplete="off" v-model="message"/>
+      <button @click="sendMessage">Send</button>
+    </form>
   </div>
 </template>
 
