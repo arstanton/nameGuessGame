@@ -1,6 +1,7 @@
 'use strict';
 
 const GameBoard = require('./gameboard');
+const Team = require('./team');
 
 module.exports = class Room {
 	constructor (roomId) {
@@ -8,8 +9,10 @@ module.exports = class Room {
 		this.startgame = false;
 		this.endtime = true;
 		this.players = {};
+		this.redTeam = new Team('Red');
+		this.blueTeam = new Team('Blue');
 		this.gameboard = new GameBoard();
-		this.roomId;
+		this.roomId = roomId;
 	}
 
 	startTimer (intervalCallback, endTimeCallback) {

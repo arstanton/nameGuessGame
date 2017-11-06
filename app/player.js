@@ -6,11 +6,17 @@ module.exports = class Player {
 		this.numConnections = 1;
 	}
 
-	setLeader (leader) {
-		this.leader = leader;
+	setLeaderOf (team) {
+		return team.addLeader(this);
 	}
 
 	setTeam (team) {
-		this.team = team;
+		return team.addToTeam(this);
+	}
+
+	removeFromTeam () {
+		if (!this.team) return false;
+		this.team.removeFromTeam(this);
+		return true;
 	}
 }

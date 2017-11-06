@@ -1,6 +1,4 @@
 'use strict';
-const Room = require('./app/room');
-const Player = require('./app/player');
 
 const PORT = '1337';
 const express = require('express');
@@ -18,6 +16,8 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
 
+const Room = require('./app/room');
+const Player = require('./app/player');
 const gamerooms = {};
 
 function size (obj) {
@@ -36,12 +36,18 @@ const generateUniqueString = require('random-id');
 
 io.sockets.on('connection', (socket) => {
 	let roomId;
+	let username;
 
+	/**
+	 *
+	 * @param string $username
+	 *
+	 */
 	socket.on('createRoom', (userInfo) => {
 		roomId = generateUniqueString(5);
-		socket.username = userInfo.username;
+		username = userInfo.username;
 		gamerooms[roomId] = new Room(roomId);
-		gamerooms[roomId].players[socket.username] = new Player(socket.username);
+		gamerooms[roomId].players[username] = new Player(username);
 		socket.join(roomId);
 		socket.emit('roomId', roomId);
 		socket.emit('updatePlayers', gamerooms[roomId].players);
@@ -60,17 +66,17 @@ io.sockets.on('connection', (socket) => {
 	 */
 	socket.on('joinRoom', (userInfo) => {
 		roomId = userInfo.roomId;
-		socket.username = userInfo.username;
+		username = userInfo.username;
 		if(roomId in gamerooms) {
-			if(socket.username in gamerooms[roomId].players) {
+			if(username in gamerooms[roomId].players) {
 				//player already exists
 			} else {
-				gamerooms[roomId].players[socket.username] = new Player(socket.username);
+				gamerooms[roomId].players[username] = new Player(username);
 				socket.join(roomId);
 				socket.emit('roomId', roomId);
 				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].players);
-				socket.emit('roomMsg', 'Thanks for connecting ' + socket.username + ' :)');
-				socket.to(roomId).emit('roomMsg', socket.username + ' has connected, be nice');
+				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
+				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');
 			}
 		} else {
 			//room doesn't exist
@@ -85,7 +91,7 @@ io.sockets.on('connection', (socket) => {
 	 */
 	socket.on('sendMessage', (msg) => {
 		try {
-			io.sockets.in(msg.roomId).emit('updateChat', {username: socket.username, message: msg.message});
+			io.sockets.in(msg.roomId).emit('updateChat', {username: username, message: msg.message});
 		} catch (e) {
 			console.log("ERROR " + e.message);
 		}
@@ -101,14 +107,14 @@ io.sockets.on('connection', (socket) => {
 
 	socket.on('disconnect', (reason) => {
 		if(roomId && gamerooms[roomId]) {
-			gamerooms[roomId].players[socket.username].numConnections -= 1;
-			if(gamerooms[roomId].players[socket.username].numConnections <= 0) {
-				delete gamerooms[roomId].players[socket.username];
+			gamerooms[roomId].players[username].numConnections -= 1;
+			if(gamerooms[roomId].players[username].numConnections <= 0) {
+				delete gamerooms[roomId].players[username];
 				if(isEmpty(gamerooms[roomId].players))
 					delete gamerooms[roomId];
 				else {
 					io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].players);
-					socket.to(roomId).emit('roomMsg', socket.username + 'has disconnected.');
+					socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
 				}
 			}
 			socket.leave(roomId);
