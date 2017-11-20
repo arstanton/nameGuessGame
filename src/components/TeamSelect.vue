@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       leader: null,
-      players: [],
+      players: {},
     };
   },
   methods: {

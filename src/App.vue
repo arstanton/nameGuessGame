@@ -62,10 +62,10 @@ body {
   width: 600px;
 }
 .team-select.red {
-  color: red;
+  color: tomato;
 }
 .team-select.blue {
-  color: blue;
+  color: teal;
 }
 
 </style>

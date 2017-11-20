@@ -1,13 +1,13 @@
 'use strict';
 
 module.exports = class Team {
-	constructor (name) {
+	constructor(name) {
 		this.name = name;
 		this.leader = null;
 		this.players = {};
 	}
 
-	addToTeam (player) {
+	addToTeam(player) {
 		if (player.isLeader) {
 			player.team.removeLeader();
 		}
@@ -22,7 +22,7 @@ module.exports = class Team {
 		return true;
 	}
 
-	addLeader (player) {
+	addLeader(player) {
 		if (this.leader) return false;
 		if (player.isLeader){
 			if (player.team.name === this.name)
@@ -37,14 +37,38 @@ module.exports = class Team {
 		return true;
 	}
 
-	removeLeader () {
+	removeLeader() {
 		this.leader.isLeader = false;
 		this.leader.team = null;
 		this.leader = null;
 	}
 
-	removeFromTeam (player) {
+	removeFromTeam(player) {
 		player.team = null;
 		delete this.players[player.name];
+	}
+
+	getPlayers() {
+		let players = Object.keys(this.players).reduce((players, key) => {
+			players[key] = Object.assign({}, this.players[key]);
+			delete players[key].team;
+			return players;
+		}, {});
+		return players;
+	}
+
+	getLeader() {
+		if (this.leader === null) return null;
+		let leader = Object.assign({}, this.leader);
+		delete leader.team;
+		return leader;
+	}
+
+	get() {
+		return {
+			name: this.name,
+			leader: this.getLeader(),
+			players: this.getPlayers(),
+		};
 	}
 }

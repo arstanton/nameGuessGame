@@ -16,8 +16,8 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
 
-const Room = require('./app/room');
-const Player = require('./app/player');
+const Room = require('./app/Room');
+const Player = require('./app/Player');
 const gamerooms = {};
 
 function size(obj) {
@@ -50,7 +50,7 @@ io.sockets.on('connection', (socket) => {
 		gamerooms[roomId].players[username] = new Player(username);
 		socket.join(roomId);
 		socket.emit('roomId', roomId);
-		socket.emit('updatePlayers', gamerooms[roomId].players);
+		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 		gamerooms[roomId].startTimer((seconds) => {
 			socket.emit('log', seconds);
 		}, () => {
@@ -74,7 +74,7 @@ io.sockets.on('connection', (socket) => {
 				gamerooms[roomId].players[username] = new Player(username);
 				socket.join(roomId);
 				socket.emit('roomId', roomId);
-				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].players);
+				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
 				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');
 			}
@@ -86,13 +86,15 @@ io.sockets.on('connection', (socket) => {
 	socket.on('joinTeam', (teamName) => {
 		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
 		if (gamerooms[roomId].teams[teamName].addToTeam(gamerooms[roomId].players[username]))
-			socket.emit('updateTeam', gamerooms[roomId].teams[teamName]);
+			for (let teamKey in gamerooms[roomId].teams)
+				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
 	});
 
 	socket.on('leadTeam', (teamName) => {
 		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
 		if (gamerooms[roomId].teams[teamName].addLeader(gamerooms[roomId].players[username]))
-			socket.emit('updateTeam', gamerooms[roomId].teams[teamName]);
+			for (let teamKey in gamerooms[roomId].teams)
+				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
 	});
 
 	/**
@@ -114,7 +116,7 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('checkOnlineUsers', () => {
-		socket.emit('updatePlayers', gamerooms[roomId].players);
+		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 	});
 
 	socket.on('disconnect', (reason) => {
@@ -125,7 +127,7 @@ io.sockets.on('connection', (socket) => {
 				if (isEmpty(gamerooms[roomId].players))
 					delete gamerooms[roomId];
 				else {
-					io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].players);
+					io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 					socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
 				}
 			}

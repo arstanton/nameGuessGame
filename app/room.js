@@ -1,10 +1,10 @@
 'use strict';
 
-const GameBoard = require('./gameboard');
-const Team = require('./team');
+const GameBoard = require('./GameBoard');
+const Team = require('./Team');
 
 module.exports = class Room {
-	constructor (roomId) {
+	constructor(roomId) {
 		this.roomview = false;
 		this.startgame = false;
 		this.endtime = true;
@@ -17,7 +17,7 @@ module.exports = class Room {
 		this.roomId = roomId;
 	}
 
-	startTimer (intervalCallback, endTimeCallback) {
+	startTimer(intervalCallback, endTimeCallback) {
 		this.endtime = false;
 		var countDownDate = new Date(new Date().getTime() + .1*50000);
 
@@ -32,5 +32,14 @@ module.exports = class Room {
 				endTimeCallback();
 			}
 		}, 250);
+	}
+
+	getPlayers() {
+		let players = Object.keys(this.players).reduce((players, key) => {
+			players[key] = Object.assign({}, this.players[key]);
+			delete players[key].team;
+			return players;
+		}, {});
+		return players;
 	}
 }
