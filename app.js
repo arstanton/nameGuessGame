@@ -20,7 +20,7 @@ const Room = require('./app/room');
 const Player = require('./app/player');
 const gamerooms = {};
 
-function size (obj) {
+function size(obj) {
 	let size = 0, key;
 	for (key in obj) {
 		if (obj.hasOwnProperty(key)) size++;
@@ -28,7 +28,7 @@ function size (obj) {
 	return size;
 }
 
-function isEmpty (obj) {
+function isEmpty(obj) {
 	return Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
@@ -65,10 +65,10 @@ io.sockets.on('connection', (socket) => {
 	 *
 	 */
 	socket.on('joinRoom', (userInfo) => {
+		if (userInfo.roomId in gamerooms) {
 		roomId = userInfo.roomId;
 		username = userInfo.username;
-		if(roomId in gamerooms) {
-			if(username in gamerooms[roomId].players) {
+			if (username in gamerooms[roomId].players) {
 				//player already exists
 			} else {
 				gamerooms[roomId].players[username] = new Player(username);
@@ -81,6 +81,18 @@ io.sockets.on('connection', (socket) => {
 		} else {
 			//room doesn't exist
 		}
+	});
+
+	socket.on('joinTeam', (teamName) => {
+		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
+		if (gamerooms[roomId].teams[teamName].addToTeam(gamerooms[roomId].players[username]))
+			socket.emit('updateTeam', gamerooms[roomId].teams[teamName]);
+	});
+
+	socket.on('leadTeam', (teamName) => {
+		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
+		if (gamerooms[roomId].teams[teamName].addLeader(gamerooms[roomId].players[username]))
+			socket.emit('updateTeam', gamerooms[roomId].teams[teamName]);
 	});
 
 	/**
@@ -106,11 +118,11 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('disconnect', (reason) => {
-		if(roomId && gamerooms[roomId]) {
+		if (roomId && gamerooms[roomId]) {
 			gamerooms[roomId].players[username].numConnections -= 1;
-			if(gamerooms[roomId].players[username].numConnections <= 0) {
+			if (gamerooms[roomId].players[username].numConnections <= 0) {
 				delete gamerooms[roomId].players[username];
-				if(isEmpty(gamerooms[roomId].players))
+				if (isEmpty(gamerooms[roomId].players))
 					delete gamerooms[roomId];
 				else {
 					io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].players);

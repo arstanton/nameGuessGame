@@ -9,8 +9,10 @@ module.exports = class Room {
 		this.startgame = false;
 		this.endtime = true;
 		this.players = {};
-		this.redTeam = new Team('Red');
-		this.blueTeam = new Team('Blue');
+		this.teams = {
+			red: new Team('Red'),
+			blue: new Team('Blue'),
+		};
 		this.gameboard = new GameBoard();
 		this.roomId = roomId;
 	}

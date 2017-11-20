@@ -15,7 +15,7 @@ module.exports = class Player {
 	}
 
 	removeFromTeam () {
-		if (!this.team) return false;
+		if ( ! this.team) return false;
 		this.team.removeFromTeam(this);
 		return true;
 	}
