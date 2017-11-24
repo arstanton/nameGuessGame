@@ -1,7 +1,9 @@
 <template>
   <div class="team-select" :class="name.toLowerCase()">
     <h1>{{ name }}</h1>
-    <h2 v-if="leader" >{{ leader.name }}</h2>
+    <div class="leader" @click="leadTeam">
+      <h2>Leader: {{ leader ? leader.name : null }}</h2>
+    </div>
     <div class="players" @click="joinTeam">
       <ul>
         <li v-for="player in players">
@@ -25,6 +27,9 @@ export default {
     };
   },
   methods: {
+    leadTeam() {
+      this.$socket.emit('leadTeam', this.name.toLowerCase());
+    },
     joinTeam() {
       this.$socket.emit('joinTeam', this.name.toLowerCase());
     },

@@ -64,8 +64,20 @@ body {
 .team-select.red {
   color: tomato;
 }
+.team-select.red .players {
+  background-color: lightpink;
+}
+.team-select.red .leader {
+  background-color: pink;
+}
 .team-select.blue {
   color: teal;
+}
+.team-select.blue .players {
+  background-color: lightblue;
+}
+.team-select.blue .leader {
+  background-color: lightcyan;
 }
 
 </style>
