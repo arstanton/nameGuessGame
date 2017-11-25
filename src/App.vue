@@ -8,7 +8,8 @@
     </div>
     <GameRoom v-if="loggedIn"
       :username="username"
-      :room-id="roomId"
+      :roomId="roomId"
+      :isOwner="isOwner"
     />
   </div>
 </template>
@@ -37,8 +38,9 @@ export default {
     },
   },
   sockets: {
-    roomId(r) {
-      this.roomId = r;
+    roomId({roomId, isOwner}) {
+      this.roomId = roomId;
+      this.isOwner = isOwner;
       this.loggedIn = true;
     },
   },

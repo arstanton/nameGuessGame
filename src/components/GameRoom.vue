@@ -2,11 +2,12 @@
   <div id="game_room">
     <div id="side_bar">
       <h1>{{ roomId }}</h1>
-      <MessageBox v-if="roomId !== ''"
-        :room-id="roomId"
-      />
+      <button v-if="isOwner" :disabled="isGameReady">Start Game</button>
       <PlayerList
         :players="players"
+      />
+      <MessageBox v-if="roomId !== ''"
+        :roomId="roomId"
       />
     </div>
     <div id="role_select">
@@ -16,22 +17,6 @@
       <team-select
         name="Red"
       />
-      <!-- <div @click="chooseTeam('blue')" id="blue_team">
-        <div @click="chooseRole('leader')" class="leader">
-        </div>
-        <div @click="chooseRole('player')" class="player">
-        </div>
-      </div>
-      <div @click="chooseTeam('red')" id="red_team">
-        <div @click="chooseRole('leader')" class="leader">
-          {{ leader.name }}
-        </div>
-        <div @click="chooseRole('player')" class="player">
-          <ul>
-            <li v-for="player in players"></li>
-          </ul>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -51,6 +36,7 @@ export default {
   props: {
     username: String,
     roomId: String,
+    isOwner: Boolean,
   },
   data() {
     return {
@@ -66,6 +52,11 @@ export default {
       this.players = players;
     },
   },
+  computed: {
+    isGameReady() {
+      return false;
+    },
+  },
 }
 </script>
 
@@ -77,6 +68,7 @@ export default {
   }
   #side_bar {
     flex-grow: 1;
+    max-width: 512px;
   }
   #role_select {
     flex-grow: 3;

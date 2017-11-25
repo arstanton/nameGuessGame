@@ -49,7 +49,7 @@ io.sockets.on('connection', (socket) => {
 		gamerooms[roomId] = new Room(roomId);
 		gamerooms[roomId].players[username] = new Player(username);
 		socket.join(roomId);
-		socket.emit('roomId', roomId);
+		socket.emit('roomId', {roomId: roomId, isOwner: true});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 		gamerooms[roomId].startTimer((seconds) => {
 			socket.emit('log', seconds);
@@ -73,7 +73,7 @@ io.sockets.on('connection', (socket) => {
 			} else {
 				gamerooms[roomId].players[username] = new Player(username);
 				socket.join(roomId);
-				socket.emit('roomId', roomId);
+				socket.emit('roomId', {roomId: roomId, isOwner: false});
 				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
 				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');
