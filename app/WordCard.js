@@ -16,7 +16,7 @@ module.exports = class WordCard {
 			word: this.word,
 			revealed: this.revealed,
 		};
-		if (this.revealed || isMaster)
+		if (this.revealed || isLeader)
 			card.type = this.type;
 		return card;
 	}
