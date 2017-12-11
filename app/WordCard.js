@@ -10,4 +10,14 @@ module.exports = class WordCard {
 	reveal() {
 		this.revealed = true;
 	}
+
+	getWordCard(isLeader = false) {
+		let card = {
+			word: this.word,
+			revealed: this.revealed,
+		};
+		if (this.revealed || isMaster)
+			card.type = this.type;
+		return card;
+	}
 }

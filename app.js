@@ -99,6 +99,20 @@ io.sockets.on('connection', (socket) => {
 
 	/**
 	 *
+	 * @param string $clue
+	 * @param number $numGuesses
+	 *
+	 */
+	socket.on('giveClue', (clue) => {
+
+	});
+
+	socket.on('chooseCard', (index) => {
+
+	});
+
+	/**
+	 *
 	 * @param string $roomId
 	 * @param string $message
 	 *
@@ -112,7 +126,11 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('startGame', () => {
-		socket.to(roomId).emit('startGame');
+		io.sockets.in(roomId).emit('startGame');
+	});
+
+	socket.on('getBoard', () => {
+		socket.emit('getBoard', gamerooms[roomId].gameboard.getBoard(gamerooms[roomId].players[username].isLeader));
 	});
 
 	socket.on('checkOnlineUsers', () => {

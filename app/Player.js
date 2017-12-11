@@ -5,6 +5,7 @@ module.exports = class Player {
 		this.name = name;
 		this.numConnections = 1;
 		this.team = null;
+		this.isLeader = false;
 	}
 
 	setLeaderOf(team) {

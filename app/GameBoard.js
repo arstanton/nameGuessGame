@@ -32,7 +32,7 @@ module.exports = class GameBoard {
 		let loseId = wordIds.pop();
 
 		words.forEach((word, i) => {
-			let type = null;
+			let type = 'Wrong';
 			if (redIds.indexOf(i) != -1)
 				type = 'Red';
 			else if (blueIds.indexOf(i) != -1)
@@ -43,12 +43,21 @@ module.exports = class GameBoard {
 		});
 	}
 
+	getBoard(isLeader) {
+		if (isLeader)
+			return this.wordCards;
+		else
+			return this.wordCards.map(wordCard => wordCard.getWordCard());
+	}
+
 	giveClue(clue, numGuesses) {
 		if (this.canGiveClue) {
 			this.clue = clue;
 			this.numGuesses = numGuesses;
+			this.canGiveClue = false;
+			return true;
 		}
-		this.canGiveClue = false;
+		return false;
 	}
 
 	chooseCard(i) {
