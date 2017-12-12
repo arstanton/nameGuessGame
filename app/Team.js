@@ -48,6 +48,10 @@ module.exports = class Team {
 		delete this.players[player.name];
 	}
 
+	hasEnoughPlayers() {
+		return this.leader && Object.keys(this.players).length;
+	}
+
 	getPlayers() {
 		let players = Object.keys(this.players).reduce((players, key) => {
 			players[key] = Object.assign({}, this.players[key]);

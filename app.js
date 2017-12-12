@@ -17,16 +17,7 @@ app.get('/', function(req, res){
 });
 
 const Room = require('./app/Room');
-const Player = require('./app/Player');
 const gamerooms = {};
-
-function size(obj) {
-	let size = 0, key;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) size++;
-	}
-	return size;
-}
 
 function isEmpty(obj) {
 	return Object.keys(obj).length === 0 && obj.constructor === Object;
@@ -35,8 +26,8 @@ function isEmpty(obj) {
 const generateUniqueString = require('random-id');
 
 io.sockets.on('connection', (socket) => {
-	let roomId;
-	let username;
+	let roomId = null;
+	let username = null;
 
 	/**
 	 *
@@ -44,10 +35,12 @@ io.sockets.on('connection', (socket) => {
 	 *
 	 */
 	socket.on('createRoom', (userInfo) => {
+		if ( ! userInfo) return;
 		roomId = generateUniqueString(5);
 		username = userInfo.username;
+		if ( ! username) return;
 		gamerooms[roomId] = new Room(roomId);
-		gamerooms[roomId].players[username] = new Player(username);
+		gamerooms[roomId].addPlayer(username);
 		socket.join(roomId);
 		socket.emit('roomId', {roomId: roomId, isOwner: true});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
@@ -65,16 +58,20 @@ io.sockets.on('connection', (socket) => {
 	 *
 	 */
 	socket.on('joinRoom', (userInfo) => {
+		if ( ! userInfo) return;
 		if (userInfo.roomId in gamerooms) {
-		roomId = userInfo.roomId;
-		username = userInfo.username;
+			roomId = userInfo.roomId;
+			username = userInfo.username;
+			if ( ! roomId || ! username) return;
 			if (username in gamerooms[roomId].players) {
 				//player already exists
 			} else {
-				gamerooms[roomId].players[username] = new Player(username);
+				gamerooms[roomId].addPlayer(username);
 				socket.join(roomId);
 				socket.emit('roomId', {roomId: roomId, isOwner: false});
 				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+				for (let teamKey in gamerooms[roomId].teams)
+					socket.emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
 				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
 				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');
 			}
@@ -84,15 +81,15 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('joinTeam', (teamName) => {
-		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
-		if (gamerooms[roomId].teams[teamName].addToTeam(gamerooms[roomId].players[username]))
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].addToTeam(username, teamName))
 			for (let teamKey in gamerooms[roomId].teams)
 				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
 	});
 
 	socket.on('leadTeam', (teamName) => {
-		if ( ! roomId || ! teamName in gamerooms[roomId].teams) return;
-		if (gamerooms[roomId].teams[teamName].addLeader(gamerooms[roomId].players[username]))
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].addLeader(username, teamName))
 			for (let teamKey in gamerooms[roomId].teams)
 				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
 	});
@@ -104,11 +101,15 @@ io.sockets.on('connection', (socket) => {
 	 *
 	 */
 	socket.on('giveClue', (clue) => {
-
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].giveClue(username, clue))
+			socket.to(roomId).emit('giveClue', clue);
 	});
 
-	socket.on('chooseCard', (index) => {
-
+	socket.on('chooseCard', (i) => {
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].chooseCard(username, i))
+			io.sockets.in(roomId).emit('getGameState', gamerooms[roomId].getGameStateFor(username));
 	});
 
 	/**
@@ -126,15 +127,14 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('startGame', () => {
-		io.sockets.in(roomId).emit('startGame');
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].hasEnoughPlayers())
+			io.sockets.in(roomId).emit('startGame');
 	});
 
-	socket.on('getBoard', () => {
-		socket.emit('getBoard', gamerooms[roomId].gameboard.getBoard(gamerooms[roomId].players[username].isLeader));
-	});
-
-	socket.on('checkOnlineUsers', () => {
-		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
+	socket.on('getGameState', () => {
+		if ( ! roomId || ! username) return;
+		socket.emit('getGameState', gamerooms[roomId].getGameStateFor(username));
 	});
 
 	socket.on('disconnect', (reason) => {

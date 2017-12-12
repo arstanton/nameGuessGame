@@ -2,7 +2,7 @@
   <div id="game_room">
     <div id="side_bar">
       <h1>{{ roomId }}</h1>
-      <button v-if="isOwner" :disabled="isGameReady">Start Game</button>
+      <button v-if="isOwner" :disabled="isGameReady" @click="startGame">Start Game</button>
       <PlayerList
         :players="players"
       />
@@ -46,6 +46,11 @@ export default {
         },
       },
     };
+  },
+  methods: {
+    startGame() {
+      this.$socket.emit('startGame');
+    },
   },
   sockets: {
     updatePlayers(players) {

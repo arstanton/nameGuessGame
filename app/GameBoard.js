@@ -16,10 +16,10 @@ module.exports = class GameBoard {
 
 		if (Math.random() < 0.5) {
 			this.teamScore['Red']++;
-			this.currentTeam = 'Red';
+			this.currentTeamName = 'Red';
 		} else {
 			this.teamScore['Blue']++;
-			this.currentTeam = 'Blue';
+			this.currentTeamName = 'Blue';
 		}
 
 		let words = getRandomWords(25);
@@ -44,10 +44,16 @@ module.exports = class GameBoard {
 	}
 
 	getBoard(isLeader) {
+		return Object.assign({}, this.gameboard, {
+			wordCards: this.getWordCards(isLeader),
+		});
+	}
+
+	getWordCards(isLeader) {
 		if (isLeader)
 			return this.wordCards;
 		else
-			return this.wordCards.map(wordCard => wordCard.getWordCard());
+			return this.wordCards.map(wordCard => wordCard.getWordCard(isLeader));
 	}
 
 	giveClue(clue, numGuesses) {
@@ -61,7 +67,7 @@ module.exports = class GameBoard {
 	}
 
 	chooseCard(i) {
-		if (this.numGuesses <= -1)
+		if (this.numGuesses <= -1 || this.canGiveClue)
 			return false;
 
 		let card = this.wordCards[i];
@@ -72,8 +78,8 @@ module.exports = class GameBoard {
 		card.reveal();
 		this.numGuesses--;
 
-		if (card.type == this.currentTeam) {
-			this.teamScore[this.currentTeam]--;
+		if (card.type == this.currentTeamName) {
+			this.teamScore[this.currentTeamName]--;
 			if (this.numGuesses <= -1)
 				this.toggleTeam();
 			return card.type;
@@ -84,8 +90,8 @@ module.exports = class GameBoard {
 
 		this.toggleTeam();
 
-		if (card.type == this.currentTeam) {
-			this.teamScore[this.currentTeam]--;
+		if (card.type == this.currentTeamName) {
+			this.teamScore[this.currentTeamName]--;
 			return card.type;
 		}
 
@@ -93,7 +99,7 @@ module.exports = class GameBoard {
 	}
 
 	toggleTeam() {
-		this.currentTeam == 'Red' ? 'Blue' : 'Red';
+		this.currentTeamName == 'Red' ? 'Blue' : 'Red';
 		this.canGiveClue = true;
 	}
 }
