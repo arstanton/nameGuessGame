@@ -2,7 +2,12 @@
   <div id="game_room">
     <div id="side_bar">
       <h1>{{ roomId }}</h1>
-      <button v-if="isOwner" :disabled="isGameReady" @click="startGame">Start Game</button>
+      <button
+        v-if="isOwner && ! isGameRunning"
+        :disabled=" ! isGameReady"
+        @click="startGame">
+          Start Game
+      </button>
       <PlayerList
         :players="players"
       />
@@ -10,12 +15,18 @@
         :roomId="roomId"
       />
     </div>
-    <div id="role_select">
-      <team-select
-        name="Blue"
-      />
-      <team-select
-        name="Red"
+    <div id="play_space">
+      <div id="role_select" v-if=" ! isGameRunning">
+        <team-select
+          name="Blue"
+        />
+        <team-select
+          name="Red"
+        />
+      </div>
+      <game-board v-else
+        :cards="cards"
+        @click="chooseCard"
       />
     </div>
   </div>
@@ -25,6 +36,7 @@
 import MessageBox from './MessageBox';
 import PlayerList from './PlayerList';
 import TeamSelect from './TeamSelect';
+import GameBoard from './GameBoard';
 
 export default {
   name: 'GameRoom',
@@ -32,6 +44,7 @@ export default {
     MessageBox,
     PlayerList,
     TeamSelect,
+    GameBoard,
   },
   props: {
     username: String,
@@ -45,21 +58,33 @@ export default {
           name: this.username,
         },
       },
+      cards: [],
+      isGameRunning: false,
     };
   },
   methods: {
     startGame() {
       this.$socket.emit('startGame');
     },
+    chooseCard(i) {
+      this.$socket.emit('chooseCard', i);
+    }
   },
   sockets: {
     updatePlayers(players) {
       this.players = players;
     },
+    getGameState(gameboard) {
+      this.cards = gameboard.wordCards;
+    },
+    startGame() {
+      this.$socket.emit('getGameState');
+      this.isGameRunning = true;
+    },
   },
   computed: {
     isGameReady() {
-      return false;
+      return true;
     },
   },
 }
@@ -75,9 +100,13 @@ export default {
     flex-grow: 1;
     max-width: 512px;
   }
-  #role_select {
+  #play_space {
     flex-grow: 3;
     display: flex;
     flex-direction: row;
+  }
+  #role_select {
+    display: flex;
+    flex-grow: 1;
   }
 </style>
