@@ -97,16 +97,14 @@ export default {
     height: 100%;
   }
   #side_bar {
-    flex-grow: 1;
-    max-width: 512px;
+    flex: 1;
   }
   #play_space {
-    flex-grow: 3;
+    flex: 3;
     display: flex;
-    flex-direction: row;
   }
   #role_select {
+    flex: 1;
     display: flex;
-    flex-grow: 1;
   }
 </style>

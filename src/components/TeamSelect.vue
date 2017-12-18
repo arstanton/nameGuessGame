@@ -46,11 +46,11 @@ export default {
 
 <style scoped>
   .team-select {
-    flex-grow: 1;
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
   .players {
-    flex-grow: 1;
+    flex: 1;
   }
 </style>

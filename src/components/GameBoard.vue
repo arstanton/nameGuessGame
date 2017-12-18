@@ -1,17 +1,10 @@
 <template>
   <div id="game_board">
-    <div v-for="(card, index) in cards" @click="$emit('click', index)" class="card">
-      {{ card.word }}
-      <template v-if="card.type && ! card.revealed">
-        LEADER VIEW
-        {{ card.type }}
-        {{ card.revealed }}
-      </template>
-      <template v-else>
-        ALL VIEW
-        {{ card.type }}
-        {{ card.revealed }}
-      </template>
+    <div
+      v-for="(card, index) in cards"
+      @click="$emit('click', index)"
+      :class="`card ${card.type}${card.revealed}`">
+      <b>{{ card.word }}</b>
     </div>
   </div>
 </template>
@@ -28,6 +21,7 @@ export default {
 <style scoped>
 #game_board {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   padding: 10px;
 }
@@ -38,5 +32,23 @@ export default {
   color: #171e42;
   padding: 10px;
   border: 1px solid black;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.card.Bluetrue {
+  background-color: teal;
+}
+.card.Redtrue {
+  background-color: tomato;
+}
+.card.Bluefalse {
+  background-color: lightcyan;
+}
+.card.Redfalse {
+  background-color: pink;
+}
+.card.Losefalse {
+  background-color: gray;
 }
 </style>
