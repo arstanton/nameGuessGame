@@ -2,16 +2,19 @@
   <div id="game_room">
     <div id="side_bar">
       <h1>{{ roomId }}</h1>
-      <button
-        v-if="isOwner && ! isGameRunning"
-        :disabled=" ! isGameReady"
-        @click="startGame">
+      <div v-if="isOwner && ! isGameRunning" class="start-container">
+        <button
+          :disabled=" ! isGameReady"
+          @click="startGame">
           Start Game
-      </button>
+        </button>
+      </div>
       <PlayerList
+        class="player-list"
         :players="players"
       />
       <MessageBox v-if="roomId !== ''"
+        class="message-box"
         :roomId="roomId"
       />
     </div>
@@ -91,20 +94,43 @@ export default {
 </script>
 
 <style scoped>
-  #game_room {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-  }
-  #side_bar {
-    flex: 1;
-  }
-  #play_space {
-    flex: 3;
-    display: flex;
-  }
-  #role_select {
-    flex: 1;
-    display: flex;
-  }
+#game_room {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+#side_bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 512px;
+}
+#play_space {
+  flex: 3;
+  display: flex;
+}
+#role_select {
+  flex: 1;
+  display: flex;
+}
+.player-list {
+  flex: 1;
+}
+.message-box {
+  flex: 5;
+}
+.start-container {
+  background: moccasin;
+  padding: 3px;
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+button[disabled] {
+  cursor: default;
+}
 </style>

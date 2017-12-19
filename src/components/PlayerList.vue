@@ -18,8 +18,23 @@ export default {
 </script>
 
 <style scoped>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  #players { list-style-type: none; margin: 0; padding: 0; }
-  #players li { padding: 5px 10px; }
-  #players li:nth-child(odd) { background: #eee; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+#player_box {
+  overflow-y: auto;
+}
+#players {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+#players li {
+  padding: 5px 10px;
+}
+#players li:nth-child(odd) {
+  background: #eee;
+}
 </style>
