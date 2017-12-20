@@ -6,8 +6,31 @@
       </li>
     </ul>
     <form onsubmit="return false">
-      <input autocomplete="off" v-model="message"/>
-      <button @click="sendMessage">↵</button>
+      <h2 v-if="isGameRunning">
+        {{ clue }}&nbsp;{{ numGuesses }}
+      </h2>
+      <template v-if=" ! isGameRunning || ! isLeader">
+        <input
+          v-model="message"
+          class="message_input"
+          autocomplete="off"
+        />
+        <button @click="sendMessage">↵</button>
+      </template>
+      <template v-else>
+        <input
+          v-model="localClue"
+          class="clue_input"
+          autocomplete="off"
+        />
+        <input
+          v-model="localNumGuesses"
+          class="num_input"
+          type="number"
+          autocomplete="off"
+        />
+        <button @click="giveClue">↵</button>
+      </template>
     </form>
   </div>
 </template>
@@ -17,11 +40,26 @@ export default {
   name: 'MessageBox',
   props: {
     roomId: String,
+    isGameRunning: Boolean,
+    clue: {
+      type: String,
+      default: null,
+    },
+    numGuesses: {
+      type: Number,
+      default: null,
+    },
+    isLeader: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       messages: new Array(),
       message: '',
+      localClue: null,
+      localNumGuesses: null,
     };
   },
   methods: {
@@ -29,9 +67,16 @@ export default {
       this.$socket.emit('sendMessage', {message: this.message, roomId: this.roomId});
       this.message = '';
     },
+    giveClue() {
+      this.$socket.emit('giveClue', {clue: this.localClue, numGuesses: this.localNumGuesses});
+      this.localClue = null;
+      this.localNumGuesses = null;
+    },
     scrollToEnd() {
-      let container = this.$el.querySelector("#messages");
-      container.scrollTop = container.scrollHeight;
+      this.$nextTick(() => {
+        let container = this.$el.querySelector("#messages");
+        container.scrollTop = container.scrollHeight;
+      });
     },
   },
   sockets: {
@@ -62,7 +107,20 @@ form {
 form input {
   border: 0;
   padding: 10px;
+}
+form input.message_input {
   width: 89%;
+}
+form input.clue_input {
+  width: 69%;
+}
+form input.num_input {
+  width: 18%;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+  margin: 0;
 }
 form button {
   width: 9%;

@@ -16,6 +16,7 @@
       <MessageBox v-if="roomId !== ''"
         class="message-box"
         :roomId="roomId"
+        :isGameRunning="isGameRunning"
       />
     </div>
     <div id="play_space">
