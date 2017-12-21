@@ -105,7 +105,7 @@ io.sockets.on('connection', (socket) => {
 	socket.on('giveClue', (clue) => {
 		if ( ! roomId || ! username) return;
 		if (gamerooms[roomId].giveClue(username, clue))
-			socket.to(roomId).emit('giveClue', clue);
+			io.sockets.in(roomId).emit('giveClue', clue);
 	});
 
 	socket.on('chooseCard', (i) => {

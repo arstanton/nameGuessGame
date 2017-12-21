@@ -99,6 +99,10 @@ export default {
       this.players = players;
       this.isGameRunning = true;
     },
+    giveClue(clue) {
+      this.clue = clue.clue;
+      this.numGuesses = +clue.numGuesses;
+    },
   },
   computed: {
     isGameReady() {
