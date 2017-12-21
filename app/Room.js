@@ -5,11 +5,12 @@ const Team = require('./Team');
 const Player = require('./Player');
 
 module.exports = class Room {
-	constructor(roomId) {
+	constructor(roomId, username) {
 		this.roomview = false;
 		this.startgame = false;
 		this.endtime = true;
 		this.players = {};
+		this.addPlayer(username);
 		this.teams = {
 			red: new Team('Red'),
 			blue: new Team('Blue'),

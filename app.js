@@ -28,6 +28,7 @@ const generateUniqueString = require('random-id');
 io.sockets.on('connection', (socket) => {
 	let roomId = null;
 	let username = null;
+	let isOwner = null;
 
 	/**
 	 *
@@ -38,11 +39,11 @@ io.sockets.on('connection', (socket) => {
 		if ( ! userInfo) return;
 		roomId = generateUniqueString(5);
 		username = userInfo.username;
+		isOwner = true;
 		if ( ! username) return;
-		gamerooms[roomId] = new Room(roomId);
-		gamerooms[roomId].addPlayer(username);
+		gamerooms[roomId] = new Room(roomId, username);
 		socket.join(roomId);
-		socket.emit('roomId', {roomId: roomId, isOwner: true});
+		socket.emit('roomId', {roomId, isOwner});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 		gamerooms[roomId].startTimer((seconds) => {
 			socket.emit('log', seconds);
@@ -62,13 +63,14 @@ io.sockets.on('connection', (socket) => {
 		if (userInfo.roomId in gamerooms) {
 			roomId = userInfo.roomId;
 			username = userInfo.username;
+			isOwner = false;
 			if ( ! roomId || ! username) return;
 			if (username in gamerooms[roomId].players) {
 				//player already exists
 			} else {
 				gamerooms[roomId].addPlayer(username);
 				socket.join(roomId);
-				socket.emit('roomId', {roomId: roomId, isOwner: false});
+				socket.emit('roomId', {roomId, isOwner});
 				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 				for (let teamKey in gamerooms[roomId].teams)
 					socket.emit('updateTeam', gamerooms[roomId].teams[teamKey].get());

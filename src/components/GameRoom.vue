@@ -17,18 +17,20 @@
         class="message-box"
         :roomId="roomId"
         :isGameRunning="isGameRunning"
+        :clue="clue"
+        :numGuesses="numGuesses"
       />
     </div>
     <div id="play_space">
       <div id="role_select" v-if=" ! isGameRunning">
-        <team-select
+        <TeamSelect
           name="Blue"
         />
-        <team-select
+        <TeamSelect
           name="Red"
         />
       </div>
-      <game-board v-else
+      <GameBoard v-else
         :cards="cards"
         @click="chooseCard"
       />
@@ -63,6 +65,9 @@ export default {
         },
       },
       cards: [],
+      clue: null,
+      numGuesses: null,
+      currentTeamName: null,
       isGameRunning: false,
     };
   },
@@ -80,6 +85,9 @@ export default {
     },
     getGameState(gameboard) {
       this.cards = gameboard.wordCards;
+      this.clue = gameboard.clue;
+      this.numGuesses = gameboard.numGuesses;
+      this.currentTeamName = gameboard.currentTeamName;
     },
     startGame() {
       this.$socket.emit('getGameState');
