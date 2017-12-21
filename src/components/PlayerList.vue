@@ -1,8 +1,8 @@
 <template>
   <div id="player_box">
     <ul id="players">
-      <li v-for="m in players">
-        <b>{{ m.name }}</b>
+      <li v-for="player in players">
+        <b>{{ player.name }}</b>
       </li>
     </ul>
   </div>

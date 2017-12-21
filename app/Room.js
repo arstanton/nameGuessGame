@@ -73,8 +73,7 @@ module.exports = class Room {
 
 	getPlayers() {
 		let players = Object.keys(this.players).reduce((players, key) => {
-			players[key] = Object.assign({}, this.players[key]);
-			delete players[key].team;
+			players[key] = this.players[key].get();
 			return players;
 		}, {});
 		return players;

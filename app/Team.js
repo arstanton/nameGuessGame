@@ -54,8 +54,7 @@ module.exports = class Team {
 
 	getPlayers() {
 		let players = Object.keys(this.players).reduce((players, key) => {
-			players[key] = Object.assign({}, this.players[key]);
-			delete players[key].team;
+			players[key] = this.players[key].get();
 			return players;
 		}, {});
 		return players;
@@ -63,9 +62,7 @@ module.exports = class Team {
 
 	getLeader() {
 		if (this.leader === null) return null;
-		let leader = Object.assign({}, this.leader);
-		delete leader.team;
-		return leader;
+		return this.leader && this.leader.get();
 	}
 
 	get() {

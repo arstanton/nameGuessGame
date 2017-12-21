@@ -26,6 +26,7 @@ module.exports = class Player {
 		return {
 			name: this.name,
 			numConnections: this.numConnections,
+			teamName: this.team && this.team.name,
 		};
 	}
 }
