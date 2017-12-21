@@ -63,7 +63,7 @@ body {
   margin: 60px auto;
   width: 600px;
 }
-.team-select.red {
+.team-select.red, .red b {
   color: tomato;
 }
 .team-select.red .players {
@@ -72,7 +72,7 @@ body {
 .team-select.red .leader {
   background-color: pink;
 }
-.team-select.blue {
+.team-select.blue, .blue b {
   color: teal;
 }
 .team-select.blue .players {
@@ -81,5 +81,4 @@ body {
 .team-select.blue .leader {
   background-color: lightcyan;
 }
-
 </style>

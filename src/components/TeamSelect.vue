@@ -26,6 +26,16 @@ export default {
       players: {},
     };
   },
+  computed: {
+    hasMinimumPlayers() {
+      return this.leader !== null && Object.keys(this.players).length > 0;
+    },
+  },
+  watch: {
+    hasMinimumPlayers() {
+      this.$emit('updated', this.hasMinimumPlayers);
+    },
+  },
   methods: {
     leadTeam() {
       this.$socket.emit('leadTeam', this.name.toLowerCase());

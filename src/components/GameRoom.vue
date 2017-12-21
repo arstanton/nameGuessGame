@@ -19,15 +19,18 @@
         :isGameRunning="isGameRunning"
         :clue="clue"
         :numGuesses="numGuesses"
+        :isLeader="isLeader"
       />
     </div>
     <div id="play_space">
       <div id="role_select" v-if=" ! isGameRunning">
         <TeamSelect
           name="Blue"
+          @updated="(blueHasMinimum) => {this.blueHasMinimum = blueHasMinimum;}"
         />
         <TeamSelect
           name="Red"
+          @updated="(redHasMinimum) => {this.redHasMinimum = redHasMinimum;}"
         />
       </div>
       <GameBoard v-else
@@ -69,6 +72,8 @@ export default {
       numGuesses: null,
       currentTeamName: null,
       isGameRunning: false,
+      blueHasMinimum: false,
+      redHasMinimum: false,
     };
   },
   methods: {
@@ -89,15 +94,19 @@ export default {
       this.numGuesses = gameboard.numGuesses;
       this.currentTeamName = gameboard.currentTeamName;
     },
-    startGame() {
+    startGame(players) {
       this.$socket.emit('getGameState');
+      this.players = players;
       this.isGameRunning = true;
     },
   },
   computed: {
     isGameReady() {
-      return true;
+      return this.redHasMinimum && this.blueHasMinimum;
     },
+    isLeader() {
+      return this.players[this.username].isLeader;
+    }
   },
 }
 </script>

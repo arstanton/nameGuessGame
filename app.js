@@ -131,7 +131,7 @@ io.sockets.on('connection', (socket) => {
 	socket.on('startGame', () => {
 		if ( ! roomId || ! username) return;
 		if (isOwner && gamerooms[roomId].hasEnoughPlayers())
-			io.sockets.in(roomId).emit('startGame');
+			io.sockets.in(roomId).emit('startGame', gamerooms[roomId].getPlayers());
 	});
 
 	socket.on('getGameState', () => {

@@ -1,7 +1,7 @@
 <template>
   <div id="player_box">
     <ul id="players">
-      <li v-for="player in players">
+      <li v-for="player in players" :class="player.teamName && player.teamName.toLowerCase()">
         <b>{{ player.name }}</b>
       </li>
     </ul>

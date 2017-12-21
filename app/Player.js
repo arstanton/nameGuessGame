@@ -27,6 +27,7 @@ module.exports = class Player {
 			name: this.name,
 			numConnections: this.numConnections,
 			teamName: this.team && this.team.name,
+			isLeader: this.isLeader,
 		};
 	}
 }

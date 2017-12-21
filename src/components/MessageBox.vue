@@ -22,12 +22,14 @@
           v-model="localClue"
           class="clue_input"
           autocomplete="off"
+          placeholder="Clue"
         />
         <input
           v-model="localNumGuesses"
           class="num_input"
           type="number"
           autocomplete="off"
+          placeholder="#"
         />
         <button @click="giveClue">↵</button>
       </template>
