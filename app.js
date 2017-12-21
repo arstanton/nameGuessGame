@@ -130,7 +130,7 @@ io.sockets.on('connection', (socket) => {
 
 	socket.on('startGame', () => {
 		if ( ! roomId || ! username) return;
-		if (gamerooms[roomId].hasEnoughPlayers())
+		if (isOwner && gamerooms[roomId].hasEnoughPlayers())
 			io.sockets.in(roomId).emit('startGame');
 	});
 
