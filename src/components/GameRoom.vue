@@ -82,7 +82,7 @@ export default {
     },
     chooseCard(i) {
       this.$socket.emit('chooseCard', i);
-    }
+    },
   },
   sockets: {
     updatePlayers(players) {
@@ -102,6 +102,9 @@ export default {
     giveClue(clue) {
       this.clue = clue.clue;
       this.numGuesses = +clue.numGuesses;
+    },
+    chooseCard() {
+      this.$socket.emit('getGameState');
     },
   },
   computed: {

@@ -42,6 +42,9 @@ export default {
 .card.Redtrue {
   background-color: tomato;
 }
+.card.Wrongtrue {
+  background-color: #b3ab96;
+}
 .card.Bluefalse {
   background-color: lightcyan;
 }

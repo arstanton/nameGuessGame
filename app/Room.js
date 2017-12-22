@@ -51,7 +51,7 @@ module.exports = class Room {
 	}
 
 	giveClue(username, clue) {
-		if ( ! this.isPlayerLeader(username)) return false;
+		if ( ! this.isPlayerLeader(username) || ! this.isTeamTurn(username)) return false;
 		return this.gameboard.giveClue(clue.clue, clue.numGuesses);
 	}
 
@@ -84,6 +84,10 @@ module.exports = class Room {
 	}
 
 	isPlayerTurn(username) {
-		return this.players[username].team.name === this.gameboard.currentTeamName;
+		return this.isTeamTurn(username) && ! this.gameboard.canGiveClue;
+	}
+
+	isTeamTurn(username) {
+		return this.players[username].team && this.players[username].team.name === this.gameboard.currentTeamName;
 	}
 }

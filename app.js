@@ -111,7 +111,7 @@ io.sockets.on('connection', (socket) => {
 	socket.on('chooseCard', (i) => {
 		if ( ! roomId || ! username) return;
 		if (gamerooms[roomId].chooseCard(username, i))
-			io.sockets.in(roomId).emit('getGameState', gamerooms[roomId].getGameStateFor(username));
+			io.sockets.in(roomId).emit('chooseCard');
 	});
 
 	/**

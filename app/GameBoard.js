@@ -44,7 +44,7 @@ module.exports = class GameBoard {
 	}
 
 	getBoard(isLeader) {
-		return Object.assign({}, this.gameboard, {
+		return Object.assign({}, this, {
 			wordCards: this.getWordCards(isLeader),
 		});
 	}
@@ -99,7 +99,7 @@ module.exports = class GameBoard {
 	}
 
 	toggleTeam() {
-		this.currentTeamName == 'Red' ? 'Blue' : 'Red';
+		this.currentTeamName = this.currentTeamName == 'Red' ? 'Blue' : 'Red';
 		this.canGiveClue = true;
 	}
 }
