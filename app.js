@@ -114,6 +114,12 @@ io.sockets.on('connection', (socket) => {
 			io.sockets.in(roomId).emit('chooseCard');
 	});
 
+	socket.on('passTurn', () => {
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].passTurn(username))
+			io.sockets.in(roomId).emit('chooseCard');
+	});
+
 	/**
 	 *
 	 * @param string $roomId

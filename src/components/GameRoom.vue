@@ -7,11 +7,16 @@
       <template v-else>
        <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
       </template>
-      <div v-if="isOwner && ! isGameRunning" class="start-container">
-        <button
+      <div class="start-container">
+        <button v-if="isOwner && ! isGameRunning"
           :disabled=" ! isGameReady"
           @click="startGame">
           Start Game
+        </button>
+        <button v-else-if="isGameRunning && ! isLeader"
+          :disabled=" ! canPass"
+          @click="passTurn">
+          Pass
         </button>
       </div>
       <PlayerList
@@ -91,6 +96,9 @@ export default {
     },
     chooseCard(i) {
       this.$socket.emit('chooseCard', i);
+    },
+    passTurn() {
+      this.$socket.emit('passTurn');
     },
   },
   sockets: {

@@ -60,6 +60,11 @@ module.exports = class Room {
 		return this.gameboard.chooseCard(i);
 	}
 
+	passTurn(username) {
+		if (this.isPlayerLeader(username) || ! this.isPlayerTurn(username)) return false;
+		return this.gameboard.passTurn();
+	}
+
 	getGameStateFor(username) {
 		return this.gameboard.getBoard(this.isPlayerLeader(username));
 	}

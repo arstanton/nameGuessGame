@@ -71,6 +71,14 @@ module.exports = class GameBoard {
 		return false;
 	}
 
+	passTurn() {
+		if (this.canPass) {
+			this.toggleTeam();
+			return true;
+		}
+		return false;
+	}
+
 	chooseCard(i) {
 		if (this.numGuesses <= -1 || this.canGiveClue)
 			return false;

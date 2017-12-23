@@ -35,6 +35,7 @@ export default {
   align-items: center;
   justify-content: center;
   display: flex;
+  cursor: pointer;
 }
 .card.bluetrue {
   background-color: teal;
