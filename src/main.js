@@ -4,9 +4,9 @@ import Vue from 'vue';
 import App from './App';
 import VueSocketio from 'vue-socket.io';
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
-Vue.use(VueSocketio, 'localhost:1337');
+Vue.use(VueSocketio,  process.env.SOCKET_SERVER_URI);
 
 /* eslint-disable no-new */
 new Vue({

@@ -10,10 +10,10 @@ const io = require('socket.io').listen(server);
 
 server.listen(PORT);
 
-app.use(express.static('public'));
+app.use(express.static('dist'));
 
 app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/dist/index.html');
 });
 
 const Room = require('./app/Room');
