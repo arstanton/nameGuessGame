@@ -36,22 +36,25 @@ export default {
   justify-content: center;
   display: flex;
 }
-.card.Bluetrue {
+.card.bluetrue {
   background-color: teal;
 }
-.card.Redtrue {
+.card.redtrue {
   background-color: tomato;
 }
-.card.Wrongtrue {
+.card.wrongtrue {
   background-color: #b3ab96;
 }
-.card.Bluefalse {
+.card.losetrue {
+  background-color: dimgray;
+}
+.card.bluefalse {
   background-color: lightcyan;
 }
-.card.Redfalse {
+.card.redfalse {
   background-color: pink;
 }
-.card.Losefalse {
+.card.losefalse {
   background-color: gray;
 }
 </style>

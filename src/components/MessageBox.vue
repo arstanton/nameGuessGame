@@ -6,10 +6,18 @@
       </li>
     </ul>
     <form onsubmit="return false">
-      <h2 v-if="isGameRunning">
-        {{ clue }}&nbsp;{{ numGuesses }}
+      <h2 v-if="isGameRunning" :class="currentTeamName && currentTeamName.toLowerCase()">
+        <template v-if="winMessage">
+          {{ winMessage }}
+        </template>
+        <template v-else-if="clue">
+          {{ clue }}&nbsp;{{ numGuesses }}
+        </template>
+        <template v-else>
+          {{ currentTeamName }} Turn
+        </template>
       </h2>
-      <template v-if=" ! isGameRunning || ! isLeader">
+      <template v-if=" ! isGameRunning || ! isLeader || winMessage">
         <input
           v-model="message"
           class="message_input"
@@ -43,6 +51,11 @@ export default {
   props: {
     roomId: String,
     isGameRunning: Boolean,
+    currentTeamName: String,
+    winMessage: {
+      type: String,
+      default: null,
+    },
     clue: {
       type: String,
       default: null,

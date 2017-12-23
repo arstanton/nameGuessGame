@@ -1,7 +1,12 @@
 <template>
   <div id="game_room">
     <div id="side_bar">
-      <h1>{{ roomId }}</h1>
+      <h1 v-if=" ! teamScore">
+        {{ roomId }}
+      </h1>
+      <template v-else>
+       <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
+      </template>
       <div v-if="isOwner && ! isGameRunning" class="start-container">
         <button
           :disabled=" ! isGameReady"
@@ -20,6 +25,8 @@
         :clue="clue"
         :numGuesses="numGuesses"
         :isLeader="isLeader"
+        :currentTeamName="currentTeamName"
+        :winMessage="winMessage"
       />
     </div>
     <div id="play_space">
@@ -71,6 +78,8 @@ export default {
       clue: null,
       numGuesses: null,
       currentTeamName: null,
+      teamScore: null,
+      canPass: false,
       isGameRunning: false,
       blueHasMinimum: false,
       redHasMinimum: false,
@@ -93,6 +102,8 @@ export default {
       this.clue = gameboard.clue;
       this.numGuesses = gameboard.numGuesses;
       this.currentTeamName = gameboard.currentTeamName;
+      this.teamScore = gameboard.teamScore;
+      this.canPass = gameboard.canPass;
     },
     startGame(players) {
       this.$socket.emit('getGameState');
@@ -113,6 +124,12 @@ export default {
     },
     isLeader() {
       return this.players[this.username].isLeader;
+    },
+    winMessage() {
+      if ( ! this.teamScore) return null;
+      for (const [team, score] of Object.entries(this.teamScore))
+        if (score === 0)
+          return `${team} Wins`;
     }
   },
 }

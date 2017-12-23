@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <div v-if="!loggedIn" id="login_menu">
+    <div v-if=" ! loggedIn" id="login_menu">
       <input type="text" v-model="username" placeholder="Name">
       <input type="text" v-model="roomId" placeholder="Room Key">
-      <button v-if="!roomId" @click="createRoom" :disabled="!username">Start New Game</button>
-      <button v-else @click="joinRoom" :disabled="!username">Join Game</button>
+      <button v-if=" ! roomId" @click="createRoom" :disabled=" ! username">Start New Game</button>
+      <button v-else @click="joinRoom" :disabled=" ! username">Join Game</button>
     </div>
     <GameRoom v-if="loggedIn"
       :username="username"
@@ -63,7 +63,7 @@ body {
   margin: 60px auto;
   width: 600px;
 }
-.team-select.red, .red b {
+.team-select.red, .red b, h2.red , b.red{
   color: tomato;
 }
 .team-select.red .players {
@@ -72,7 +72,7 @@ body {
 .team-select.red .leader {
   background-color: pink;
 }
-.team-select.blue, .blue b {
+.team-select.blue, .blue b, h2.blue, b.blue {
   color: teal;
 }
 .team-select.blue .players {

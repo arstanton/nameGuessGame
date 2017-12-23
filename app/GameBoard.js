@@ -5,9 +5,7 @@ const WordCard = require('./WordCard');
 
 module.exports = class GameBoard {
 	constructor() {
-		this.canGiveClue = true;
-		this.clue = null;
-		this.numGuesses = -1;
+		this.setNewTurnState();
 		this.wordCards = [];
 		this.teamScore = {
 			'Red': 8,
@@ -43,6 +41,13 @@ module.exports = class GameBoard {
 		});
 	}
 
+	setNewTurnState() {
+		this.clue = null;
+		this.numGuesses = -1;
+		this.canGiveClue = true;
+		this.canPass = false;
+	}
+
 	getBoard(isLeader) {
 		return Object.assign({}, this, {
 			wordCards: this.getWordCards(isLeader),
@@ -76,6 +81,7 @@ module.exports = class GameBoard {
 			return false;
 
 		card.reveal();
+		this.canPass = true;
 		this.numGuesses--;
 
 		if (card.type == this.currentTeamName) {
@@ -85,8 +91,11 @@ module.exports = class GameBoard {
 			return card.type;
 		}
 
-		if (card.type == 'Lose')
+		if (card.type == 'Lose') {
+			this.toggleTeam();
+			this.teamScore[this.currentTeamName] = 0;
 			return card.type;
+		}
 
 		this.toggleTeam();
 
@@ -100,6 +109,6 @@ module.exports = class GameBoard {
 
 	toggleTeam() {
 		this.currentTeamName = this.currentTeamName == 'Red' ? 'Blue' : 'Red';
-		this.canGiveClue = true;
+		this.setNewTurnState();
 	}
 }
