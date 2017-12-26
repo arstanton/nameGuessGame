@@ -116,7 +116,7 @@ export default {
 }
 form {
   background: moccasin;
-  padding: 3px;
+  padding: 10px;
   width: 100%;
 }
 form input {
@@ -138,7 +138,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 form button {
-  width: 9%;
+  width: 8%;
   background: palevioletred;
   border: none;
   padding: 10px;
@@ -156,6 +156,6 @@ form button {
   padding: 5px 10px;
 }
 #messages li:nth-child(odd) {
-  background: #eee;
+  background: antiquewhite;
 }
 </style>

@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <div v-if=" ! loggedIn" id="login_menu">
-      <input type="text" v-model="username" placeholder="Name">
-      <input type="text" v-model="roomId" placeholder="Room Key">
-      <button v-if=" ! roomId" @click="createRoom" :disabled=" ! username">Start New Game</button>
-      <button v-else @click="joinRoom" :disabled=" ! username">Join Game</button>
-    </div>
+    <form v-if=" ! loggedIn" id="login_menu"  onsubmit="return false">
+      <div>
+        <input type="text" v-model="username" placeholder="Name">
+      </div>
+      <div>
+        <input type="text" v-model="roomId" placeholder="Room Key">
+      </div>
+      <div>
+        <button v-if=" ! roomId" @click="createRoom" :disabled=" ! username">Start New Game</button>
+        <button v-else @click="joinRoom" :disabled=" ! username">Join Game</button>
+      </div>
+    </form>
     <GameRoom v-if="loggedIn"
       :username="username"
       :roomId="roomId"
@@ -52,16 +58,33 @@ body {
   margin: 0;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Courier New", Courier, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  align-items: center;
   text-align: center;
   color: #2c3e50;
   height: 100%;
+  background-color: moccasin;
+}
+input, button {
+  font-family: "Courier New", Courier, monospace;
 }
 #login_menu {
   margin: 60px auto;
-  width: 600px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+#login_menu div {
+  flex: 1;
+}
+#login_menu input, #login_menu button {
+  border: 0;
+  padding: 10px;
+  margin: 2px;
+  width: 100%;
 }
 .team-select.red, .red b, h2.red , b.red{
   color: tomato;

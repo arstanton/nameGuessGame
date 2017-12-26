@@ -35,6 +35,6 @@ export default {
   padding: 5px 10px;
 }
 #players li:nth-child(odd) {
-  background: #eee;
+  background: antiquewhite;
 }
 </style>

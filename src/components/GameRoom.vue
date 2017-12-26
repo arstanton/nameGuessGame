@@ -148,6 +148,7 @@ export default {
   display: flex;
   flex-direction: row;
   height: 100%;
+  flex: 1;
 }
 #side_bar {
   flex: 1;
@@ -170,7 +171,6 @@ export default {
   flex: 5;
 }
 .start-container {
-  background: moccasin;
   padding: 3px;
   width: 100%;
   box-sizing: border-box;
