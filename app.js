@@ -128,7 +128,7 @@ io.sockets.on('connection', (socket) => {
 	 */
 	socket.on('sendMessage', (msg) => {
 		try {
-			io.sockets.in(msg.roomId).emit('updateChat', {username: username, message: msg.message});
+			io.sockets.in(msg.roomId).emit('updateChat', {username, message: msg.message});
 		} catch (e) {
 			console.log("ERROR " + e.message);
 		}
@@ -144,6 +144,11 @@ io.sockets.on('connection', (socket) => {
 		if ( ! roomId || ! username) return;
 		socket.emit('getGameState', gamerooms[roomId].getGameStateFor(username));
 	});
+
+	socket.on('mousemove', function(pos) {
+		if ( ! roomId || ! username || gamerooms[roomId].isPlayerLeader(username) || ! gamerooms[roomId].isTeamTurn(username)) return;
+      	return socket.to(roomId).emit("mousemove", {username, x: pos.x, y: pos.y});
+    });
 
 	socket.on('disconnect', (reason) => {
 		if (roomId && gamerooms[roomId]) {

@@ -47,6 +47,10 @@
       </div>
       <GameBoard v-else
         :cards="cards"
+        :username="username"
+        :isLeader="isLeader"
+        :players="players"
+        :currentTeamName="currentTeamName"
         @click="chooseCard"
       />
     </div>
