@@ -5,40 +5,46 @@
         <b>{{ m.username }}:</b> {{ m.message }}
       </li>
     </ul>
+    <h2 v-if="isGameRunning" :class="currentTeamName && currentTeamName.toLowerCase()">
+      <template v-if="winMessage">
+        {{ winMessage }}
+      </template>
+      <template v-else-if="clue">
+        {{ clue }}&nbsp;{{ numGuesses }}
+      </template>
+      <template v-else>
+        {{ currentTeamName }} Turn
+      </template>
+    </h2>
     <form onsubmit="return false">
-      <h2 v-if="isGameRunning" :class="currentTeamName && currentTeamName.toLowerCase()">
-        <template v-if="winMessage">
-          {{ winMessage }}
-        </template>
-        <template v-else-if="clue">
-          {{ clue }}&nbsp;{{ numGuesses }}
-        </template>
-        <template v-else>
-          {{ currentTeamName }} Turn
-        </template>
-      </h2>
       <template v-if=" ! isGameRunning || ! isLeader || winMessage">
-        <input
-          v-model="message"
-          class="message_input"
-          autocomplete="off"
-        />
+        <div>
+          <input
+            v-model="message"
+            class="message_input"
+            autocomplete="off"
+          />
+        </div>
         <button @click="sendMessage">↵</button>
       </template>
       <template v-else>
-        <input
-          v-model="localClue"
-          class="clue_input"
-          autocomplete="off"
-          placeholder="Clue"
-        />
-        <input
-          v-model="localNumGuesses"
-          class="num_input"
-          type="number"
-          autocomplete="off"
-          placeholder="#"
-        />
+        <div>
+          <input
+            ref="clue"
+            v-model="localClue"
+            class="clue_input"
+            autocomplete="off"
+            placeholder="Clue"
+          />
+          <input
+            ref="numGuesses"
+            v-model="localNumGuesses"
+            class="num_input"
+            type="number"
+            autocomplete="off"
+            placeholder="#"
+          />
+        </div>
         <button @click="giveClue">↵</button>
       </template>
     </form>
@@ -83,9 +89,18 @@ export default {
       this.message = '';
     },
     giveClue() {
+      if (this.localClue === null || this.localClue === '') {
+        this.$refs.clue.focus();
+        return false;
+      }
+      if (this.localNumGuesses === null || this.localNumGuesses === '') {
+        this.$refs.numGuesses.focus();
+        return false;
+      }
       this.$socket.emit('giveClue', {clue: this.localClue, numGuesses: this.localNumGuesses});
       this.localClue = null;
       this.localNumGuesses = null;
+      this.$refs.clue.focus();
     },
     scrollToEnd() {
       this.$nextTick(() => {
@@ -114,20 +129,29 @@ export default {
   flex-direction: column;
   align-items: flex-end;
 }
+h2 {
+  text-transform: uppercase;
+  padding-right: 10px;
+}
 form {
   background: moccasin;
   padding: 10px;
   width: 100%;
+  display: flex;
+}
+form div {
+  flex: 1;
 }
 form input {
   border: 0;
   padding: 10px;
 }
 form input.message_input {
-  width: 89%;
+  width: 100%;
 }
 form input.clue_input {
   width: 69%;
+  text-transform: uppercase;
 }
 form input.num_input {
   width: 18%;
@@ -138,7 +162,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 form button {
-  width: 8%;
+  width: 35px;
   background: palevioletred;
   border: none;
   padding: 10px;

@@ -2,7 +2,7 @@
   <div id="game_room">
     <div id="side_bar">
       <h1 v-if=" ! teamScore">
-        {{ roomId }}
+        🔑 {{ roomId }}
       </h1>
       <template v-else>
        <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>

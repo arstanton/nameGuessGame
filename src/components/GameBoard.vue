@@ -51,9 +51,11 @@ export default {
 }
 .card.bluefalse {
   background-color: lightcyan;
+  color: teal;
 }
 .card.redfalse {
   background-color: pink;
+  color: tomato;
 }
 .card.losefalse {
   background-color: gray;
