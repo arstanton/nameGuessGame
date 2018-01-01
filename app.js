@@ -152,13 +152,18 @@ io.sockets.on('connection', (socket) => {
 
 	socket.on('disconnect', (reason) => {
 		if (roomId && gamerooms[roomId]) {
-			gamerooms[roomId].players[username].numConnections -= 1;
-			if (gamerooms[roomId].players[username].numConnections <= 0) {
+			if (--gamerooms[roomId].players[username].numConnections <= 0) {
+				let team = gamerooms[roomId].players[username].team;
+				if (gamerooms[roomId].isPlayerLeader(username)) {
+					team.removeLeader();
+				}
+				gamerooms[roomId].players[username].removeFromTeam();
 				delete gamerooms[roomId].players[username];
 				if (isEmpty(gamerooms[roomId].players))
 					delete gamerooms[roomId];
 				else {
-					io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+					socket.to(roomId).emit('updateTeam', team.get());
+					socket.to(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 					socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
 				}
 			}
