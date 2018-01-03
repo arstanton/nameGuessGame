@@ -119,4 +119,8 @@ module.exports = class GameBoard {
 		this.currentTeamName = this.currentTeamName == 'Red' ? 'Blue' : 'Red';
 		this.setNewTurnState();
 	}
+
+	isGameOver() {
+		return ! this.teamScore['Blue'] || ! this.teamScore['Red'];
+	}
 }

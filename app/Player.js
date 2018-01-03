@@ -4,8 +4,7 @@ module.exports = class Player {
 	constructor(name) {
 		this.name = name;
 		this.numConnections = 1;
-		this.team = null;
-		this.isLeader = false;
+		this.resetTeam();
 	}
 
 	setLeaderOf(team) {
@@ -20,6 +19,11 @@ module.exports = class Player {
 		if ( ! this.team) return false;
 		this.team.removeFromTeam(this);
 		return true;
+	}
+
+	resetTeam() {
+		this.team = null;
+		this.isLeader = false;
 	}
 
 	get() {

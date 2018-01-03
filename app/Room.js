@@ -6,8 +6,6 @@ const Player = require('./Player');
 
 module.exports = class Room {
 	constructor(roomId, username) {
-		this.roomview = false;
-		this.startgame = false;
 		this.endtime = true;
 		this.players = {};
 		this.addPlayer(username);
@@ -17,6 +15,18 @@ module.exports = class Room {
 		};
 		this.gameboard = new GameBoard();
 		this.roomId = roomId;
+	}
+
+	restartRoom() {
+		if ( ! this.gameboard.isGameOver()) return false;
+		this.teams = {
+			red: new Team('Red'),
+			blue: new Team('Blue'),
+		};
+		for (let playerKey in this.players)
+			this.players[playerKey].resetTeam();
+		this.gameboard = new GameBoard();
+		return true;
 	}
 
 	startTimer(intervalCallback, endTimeCallback) {

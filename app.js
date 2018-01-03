@@ -140,6 +140,12 @@ io.sockets.on('connection', (socket) => {
 			io.sockets.in(roomId).emit('startGame', gamerooms[roomId].getPlayers());
 	});
 
+	socket.on('restartGame', () => {
+		if ( ! roomId || ! username) return;
+		if (gamerooms[roomId].restartRoom())
+			io.sockets.in(roomId).emit('restartGame');
+	});
+
 	socket.on('getGameState', () => {
 		if ( ! roomId || ! username) return;
 		socket.emit('getGameState', gamerooms[roomId].getGameStateFor(username));

@@ -13,6 +13,11 @@
           @click="startGame">
           Start Game
         </button>
+        <button v-else-if="isOwner && isGameRunning && ( ! teamScore.Blue || ! teamScore.Red)"
+          @click="restartGame"
+        >
+          Restart Game
+        </button>
         <button v-else-if="isGameRunning && ! isLeader"
           :disabled=" ! canPass"
           @click="passTurn">
@@ -98,6 +103,9 @@ export default {
     startGame() {
       this.$socket.emit('startGame');
     },
+    restartGame() {
+      this.$socket.emit('restartGame');
+    },
     chooseCard(i) {
       this.$socket.emit('chooseCard', i);
     },
@@ -128,6 +136,17 @@ export default {
     },
     chooseCard() {
       this.$socket.emit('getGameState');
+    },
+    restartGame() {
+      this.cards = [];
+      this.clue = null;
+      this.numGuesses = null;
+      this.currentTeamName = null;
+      this.teamScore = null;
+      this.canPass = false;
+      this.isGameRunning = false;
+      this.blueHasMinimum = false;
+      this.redHasMinimum = false;
     },
   },
   computed: {
