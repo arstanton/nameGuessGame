@@ -93,8 +93,9 @@ module.exports = class GameBoard {
 		this.numGuesses--;
 
 		if (card.type == this.currentTeamName) {
-			this.teamScore[this.currentTeamName]--;
-			if (this.numGuesses <= -1)
+			if (--this.teamScore[this.currentTeamName] === 0)
+				this.revealAllCards();
+			else if (this.numGuesses <= -1)
 				this.toggleTeam();
 			return card.type;
 		}
@@ -102,13 +103,15 @@ module.exports = class GameBoard {
 		if (card.type == 'Lose') {
 			this.toggleTeam();
 			this.teamScore[this.currentTeamName] = 0;
+			this.revealAllCards();
 			return card.type;
 		}
 
 		this.toggleTeam();
 
 		if (card.type == this.currentTeamName) {
-			this.teamScore[this.currentTeamName]--;
+			if (--this.teamScore[this.currentTeamName] === 0)
+				this.revealAllCards();
 			return card.type;
 		}
 
@@ -122,5 +125,11 @@ module.exports = class GameBoard {
 
 	isGameOver() {
 		return ! this.teamScore['Blue'] || ! this.teamScore['Red'];
+	}
+
+	revealAllCards() {
+		this.wordCards.forEach((card) => {
+			card.reveal();
+		});
 	}
 }
