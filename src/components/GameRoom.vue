@@ -2,7 +2,13 @@
   <div id="game_room">
     <div id="side_bar">
       <h1 v-if=" ! teamScore">
-        🔑 {{ roomId }}
+        <span id="copy" @click="copyKeyLink">📋</span>
+        <input
+          id="key"
+          ref="key"
+          :value="roomId"
+          readonly
+        />
       </h1>
       <template v-else>
        <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
@@ -81,6 +87,9 @@ export default {
     roomId: String,
     isOwner: Boolean,
   },
+  mounted() {
+    this.$router.push({ path: `/${this.roomId}` });
+  },
   data() {
     return {
       players: {
@@ -111,6 +120,12 @@ export default {
     },
     passTurn() {
       this.$socket.emit('passTurn');
+    },
+    copyKeyLink() {
+      this.$refs.key.value = window.location.href;
+      this.$refs.key.select();
+      document.execCommand('copy');
+      this.$refs.key.value = this.roomId;
     },
   },
   sockets: {
@@ -197,6 +212,15 @@ export default {
   padding: 3px;
   width: 100%;
   box-sizing: border-box;
+}
+#copy {
+  cursor: pointer;
+}
+#key {
+  background-color: transparent;
+  border: none;
+  font: inherit;
+  width: 100px;
 }
 button {
   width: 100%;

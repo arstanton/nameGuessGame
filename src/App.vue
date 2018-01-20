@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       username: '',
-      roomId: '',
+      roomId: this.$route.params.key || '',
       loggedIn: false,
     };
   },
