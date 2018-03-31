@@ -73,6 +73,7 @@ import MessageBox from './MessageBox';
 import PlayerList from './PlayerList';
 import TeamSelect from './TeamSelect';
 import GameBoard from './GameBoard';
+import { mapState } from 'vuex';
 
 export default {
   name: 'GameRoom',
@@ -92,18 +93,12 @@ export default {
   },
   data() {
     return {
-      players: {
-        [this.username]: {
-          name: this.username,
-        },
-      },
       cards: [],
       clue: null,
       numGuesses: null,
       currentTeamName: null,
       teamScore: null,
       canPass: false,
-      isGameRunning: false,
       blueHasMinimum: false,
       redHasMinimum: false,
     };
@@ -129,9 +124,6 @@ export default {
     },
   },
   sockets: {
-    updatePlayers(players) {
-      this.players = players;
-    },
     getGameState(gameboard) {
       this.cards = gameboard.wordCards;
       this.clue = gameboard.clue;
@@ -139,11 +131,6 @@ export default {
       this.currentTeamName = gameboard.currentTeamName;
       this.teamScore = gameboard.teamScore;
       this.canPass = gameboard.canPass;
-    },
-    startGame(players) {
-      this.$socket.emit('getGameState');
-      this.players = players;
-      this.isGameRunning = true;
     },
     giveClue(clue) {
       this.clue = clue.clue;
@@ -168,15 +155,17 @@ export default {
     isGameReady() {
       return this.redHasMinimum && this.blueHasMinimum;
     },
-    isLeader() {
-      return this.players[this.username].isLeader;
-    },
     winMessage() {
       if ( ! this.teamScore) return null;
       for (const [team, score] of Object.entries(this.teamScore))
         if (score === 0)
           return `${team} Wins`;
-    }
+    },
+    ...mapState('game', [
+      'players',
+      'isGameRunning',
+      'isLeader'
+    ])
   },
 }
 </script>
