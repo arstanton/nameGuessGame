@@ -37,9 +37,11 @@ export default {
   },
   methods: {
     createRoom() {
+      this.$store.dispatch('game/setUsername', this.username);
       this.$socket.emit('createRoom', {username: this.username});
     },
     joinRoom() {
+      this.$store.dispatch('game/setUsername', this.username);
       this.$socket.emit('joinRoom', {roomId: this.roomId, username: this.username});
     },
   },

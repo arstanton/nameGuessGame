@@ -18,7 +18,8 @@
     "socket.io": "2.0.3",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vue-socket.io": "2.1.1-a"
+    "vue-socket.io": "2.1.1-a",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "gulp": "3.9.1",
