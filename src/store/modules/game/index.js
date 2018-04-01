@@ -13,6 +13,9 @@ export default {
       state.players = players;
       state.isGameRunning = true;
     },
+    restartGame(state) {
+      state.isGameRunning = false;
+    },
     SOCKET_restartGame(state) {
       state.players = {};
     },
@@ -24,6 +27,9 @@ export default {
     socket_startGame(context, players) {
       this._vm.$socket.emit('getGameState');
       context.commit('startGame', players);
+    },
+    socket_restartGame(context) {
+      context.commit('restartGame');
     },
     socket_updatePlayers(context, players) {
       context.commit('updatePlayers', players);

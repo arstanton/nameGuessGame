@@ -37,10 +37,8 @@
       <MessageBox v-if="roomId !== ''"
         class="message-box"
         :roomId="roomId"
-        :isGameRunning="isGameRunning"
         :clue="clue"
         :numGuesses="numGuesses"
-        :isLeader="isLeader"
         :currentTeamName="currentTeamName"
         :winMessage="winMessage"
       />
@@ -73,7 +71,7 @@ import MessageBox from './MessageBox';
 import PlayerList from './PlayerList';
 import TeamSelect from './TeamSelect';
 import GameBoard from './GameBoard';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 export default {
   name: 'GameRoom',
@@ -164,8 +162,10 @@ export default {
     ...mapState('game', [
       'players',
       'isGameRunning',
-      'isLeader'
-    ])
+    ]),
+    ...mapGetters('game', [
+      'isLeader',
+    ]),
   },
 }
 </script>
