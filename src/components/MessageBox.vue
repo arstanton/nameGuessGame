@@ -52,11 +52,12 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex';
+
 export default {
   name: 'MessageBox',
   props: {
     roomId: String,
-    isGameRunning: Boolean,
     currentTeamName: String,
     winMessage: {
       type: String,
@@ -69,10 +70,6 @@ export default {
     numGuesses: {
       type: Number,
       default: null,
-    },
-    isLeader: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -114,6 +111,14 @@ export default {
       this.messages.push(m);
       this.scrollToEnd();
     },
+  },
+  computed: {
+    ...mapState('game', [
+      'isGameRunning',
+    ]),
+    ...mapGetters('game', [
+      'isLeader',
+    ]),
   },
 }
 </script>
