@@ -71,6 +71,9 @@ export default {
 .lose.unknown .card .front, .lose.revealed .card .front {
   background-color: gray;
 }
+.wrong.revealed .card .front {
+  background-color: #b3ab96;
+}
 
 .revealed .card {
   transform: rotateY(180deg);
