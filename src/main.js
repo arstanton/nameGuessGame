@@ -5,12 +5,19 @@ import App from './App';
 
 import store from './store';
 
-import VueSocketio from 'vue-socket.io';
+import VueSocketIO from 'vue-socket.io';
 import VueRouter from 'vue-router';
 
 Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
-Vue.use(VueSocketio, process.env.SOCKET_SERVER_URI, store);
+Vue.use(new VueSocketIO({
+  connection: process.env.SOCKET_SERVER_URI,
+  vuex: {
+    store,
+    actionPrefix: "socket_",
+    mutationPrefix: "SOCKET_"
+  }
+}));
 Vue.use(VueRouter);
 
 const routes = [
