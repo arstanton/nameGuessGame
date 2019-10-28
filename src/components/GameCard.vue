@@ -33,7 +33,6 @@ export default {
   padding: 3px;
 }
 .card {
-  background-color: #e0ddd5;
   color: #171e42;
   cursor: pointer;
   flex: 1;
@@ -43,6 +42,7 @@ export default {
   border-radius: 10px;
 }
 .face {
+  background-color: #e0ddd5;
   transition: all .5s ease-in-out;
   align-items: center;
   justify-content: center;
