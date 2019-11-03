@@ -1,7 +1,7 @@
 'use strict';
 
 const GameBoard = require('./GameBoard');
-const Team = require('./Team');
+const Teams = require('./Teams');
 const Player = require('./Player');
 
 module.exports = class Room {
@@ -9,9 +9,9 @@ module.exports = class Room {
 		this.endtime = true;
 		this.players = {};
 		this.addPlayer(username);
-		this.teams = {
-			red: new Team('Red'),
-			blue: new Team('Blue'),
+		this.leaders = {
+			[Teams.RED]: null,
+			[Teams.BLUE]: null,
 		};
 		this.gameboard = new GameBoard();
 		this.roomId = roomId;
@@ -19,9 +19,9 @@ module.exports = class Room {
 
 	restartRoom() {
 		if ( ! this.gameboard.isGameOver()) return false;
-		this.teams = {
-			red: new Team('Red'),
-			blue: new Team('Blue'),
+		this.leaders = {
+			[Teams.RED]: null,
+			[Teams.BLUE]: null,
 		};
 		for (let playerKey in this.players)
 			this.players[playerKey].resetTeam();
@@ -50,14 +50,36 @@ module.exports = class Room {
 		this.players[username] = new Player(username);
 	}
 
+	removePlayer(username) {
+		if (--this.players[username].numConnections <= 0) {
+			const player = this.players[username];
+			const team = player.team;
+			if (team) {
+				if (this.isPlayerLeader(username))
+					this.leaders[player.team] = null;
+			}
+			delete this.players[username];
+			return true;
+		}
+		return false;
+	}
+
 	addToTeam(username, teamName) {
-		if ( ! teamName in this.teams) return false;
-		return this.teams[teamName].addToTeam(this.players[username]);
+		if ( ! Object.values(Teams).includes(teamName)) return false;
+		const player = this.players[username];
+		if (player.isLeader)
+			this.leaders[player.team] = null;
+		return player.setTeam(teamName, false);
 	}
 
 	addLeader(username, teamName) {
-		if ( ! teamName in this.teams) return false;
-		return this.teams[teamName].addLeader(this.players[username]);
+		if ( ! Object.values(Teams).includes(teamName)) return false;
+		if (this.leaders[teamName] != null) return false;
+		const player = this.players[username];
+		if (player.isLeader)
+			this.leaders[player.team] = null;
+		this.leaders[teamName] = player;
+		return player.setTeam(teamName, true);
 	}
 
 	giveClue(username, clue) {
@@ -80,9 +102,11 @@ module.exports = class Room {
 	}
 
 	hasEnoughPlayers() {
-		for (let teamKey in this.teams)
-			if ( ! this.teams[teamKey].hasEnoughPlayers())
+		for (let team of Object.values(Teams)) {
+			const teamHasPlayer = Object.values(this.players).find(p => p.team === team)
+			if ( ! this.leaders[team] || ! teamHasPlayer)
 				return false;
+		}
 		return true;
 	}
 
@@ -103,6 +127,6 @@ module.exports = class Room {
 	}
 
 	isTeamTurn(username) {
-		return this.players[username].team && this.players[username].team.name === this.gameboard.currentTeamName;
+		return this.players[username].team && this.players[username].team === this.gameboard.currentTeamName;
 	}
 }

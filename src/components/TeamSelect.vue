@@ -6,7 +6,7 @@
     </div>
     <div class="players" @click="joinTeam">
       <ul>
-        <li v-for="player in players">
+        <li v-for="player in players" v-if=" ! player.isLeader">
           {{ player.name }}
         </li>
       </ul>
@@ -19,16 +19,17 @@ export default {
   name: 'TeamSelect',
   props: {
     name: String,
-  },
-  data() {
-    return {
-      leader: null,
-      players: {},
-    };
+    allPlayers: Object,
   },
   computed: {
+    players() {
+      return Object.values(this.allPlayers).filter((p) => p.teamName === this.name);
+    },
+    leader() {
+      return this.players.find((p) => p.isLeader === true);
+    },
     hasMinimumPlayers() {
-      return this.leader !== null && Object.keys(this.players).length > 0;
+      return this.leader && this.players && this.players.length > 0;
     },
   },
   watch: {
@@ -38,17 +39,10 @@ export default {
   },
   methods: {
     leadTeam() {
-      this.$socket.emit('leadTeam', this.name.toLowerCase());
+      this.$socket.emit('leadTeam', this.name);
     },
     joinTeam() {
-      this.$socket.emit('joinTeam', this.name.toLowerCase());
-    },
-  },
-  sockets: {
-    updateTeam(team) {
-      if (team.name !== this.name) return;
-      this.leader = team.leader;
-      this.players = team.players;
+      this.$socket.emit('joinTeam', this.name);
     },
   },
 }

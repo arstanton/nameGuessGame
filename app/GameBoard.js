@@ -2,22 +2,23 @@
 
 const getRandomWords = require('./RandomWords');
 const WordCard = require('./WordCard');
+const Teams = require('./Teams');
 
 module.exports = class GameBoard {
 	constructor() {
 		this.setNewTurnState();
 		this.wordCards = [];
 		this.teamScore = {
-			'Red': 8,
-			'Blue': 8,
+			[Teams.RED]: 8,
+			[Teams.BLUE]: 8,
 		};
 
 		if (Math.random() < 0.5) {
-			this.teamScore['Red']++;
-			this.currentTeamName = 'Red';
+			this.teamScore[Teams.RED]++;
+			this.currentTeamName = Teams.RED;
 		} else {
-			this.teamScore['Blue']++;
-			this.currentTeamName = 'Blue';
+			this.teamScore[Teams.BLUE]++;
+			this.currentTeamName = Teams.BLUE;
 		}
 
 		let words = getRandomWords(25);
@@ -25,16 +26,16 @@ module.exports = class GameBoard {
 		for(let x = 0; x < 25; x++)
 			wordIds.push(x);
 		wordIds.sort(() => Math.random() - 0.5);
-		let redIds = wordIds.splice(0, this.teamScore['Red']);
-		let blueIds = wordIds.splice(0, this.teamScore['Blue']);
+		let redIds = wordIds.splice(0, this.teamScore[Teams.RED]);
+		let blueIds = wordIds.splice(0, this.teamScore[Teams.BLUE]);
 		let loseId = wordIds.pop();
 
 		words.forEach((word, i) => {
 			let type = 'Wrong';
 			if (redIds.indexOf(i) != -1)
-				type = 'Red';
+				type = Teams.RED;
 			else if (blueIds.indexOf(i) != -1)
-				type = 'Blue';
+				type = Teams.BLUE;
 			else if (loseId == i)
 				type = 'Lose';
 			this.wordCards.push(new WordCard(word, type));
@@ -119,12 +120,12 @@ module.exports = class GameBoard {
 	}
 
 	toggleTeam() {
-		this.currentTeamName = this.currentTeamName == 'Red' ? 'Blue' : 'Red';
+		this.currentTeamName = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
 		this.setNewTurnState();
 	}
 
 	isGameOver() {
-		return ! this.teamScore['Blue'] || ! this.teamScore['Red'];
+		return ! this.teamScore[Teams.BLUE] || ! this.teamScore[Teams.RED];
 	}
 
 	revealAllCards() {

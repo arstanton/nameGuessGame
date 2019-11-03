@@ -9,6 +9,7 @@
       </div>
       <div>
         <button v-if=" ! roomId" @click="createRoom" :disabled=" ! username">Start New Game</button>
+        <button v-if=" ! roomId" @click="createCoopRoom" :disabled=" ! username">Start Coop Game</button>
         <button v-else @click="joinRoom" :disabled=" ! username">Join Game</button>
       </div>
     </form>
@@ -38,7 +39,11 @@ export default {
   methods: {
     createRoom() {
       this.$store.dispatch('game/setUsername', this.username);
-      this.$socket.emit('createRoom', {username: this.username});
+      this.$socket.emit('createRoom', {username: this.username, roomType: 'vs'});
+    },
+    createCoopRoom() {
+      this.$store.dispatch('game/setUsername', this.username);
+      this.$socket.emit('createRoom', {username: this.username, roomType: 'coop'});
     },
     joinRoom() {
       this.$store.dispatch('game/setUsername', this.username);

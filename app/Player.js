@@ -3,21 +3,17 @@
 module.exports = class Player {
 	constructor(name) {
 		this.name = name;
+		this.team = null;
+		this.isLeader = false;
 		this.numConnections = 1;
 		this.resetTeam();
 	}
 
-	setLeaderOf(team) {
-		return team.addLeader(this);
-	}
-
-	setTeam(team) {
-		return team.addToTeam(this);
-	}
-
-	removeFromTeam() {
-		if ( ! this.team) return false;
-		this.team.removeFromTeam(this);
+	setTeam(teamName, isLeader = false) {
+		if (this.team === teamName && this.isLeader === isLeader)
+			return false;
+		this.isLeader = isLeader;
+		this.team = teamName;
 		return true;
 	}
 
@@ -30,7 +26,7 @@ module.exports = class Player {
 		return {
 			name: this.name,
 			numConnections: this.numConnections,
-			teamName: this.team && this.team.name,
+			teamName: this.team,
 			isLeader: this.isLeader,
 		};
 	}

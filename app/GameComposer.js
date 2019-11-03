@@ -17,12 +17,13 @@ module.exports = (io) => (socket) => {
 	/**
 	 *
 	 * @param string $username
+	 * @param string $roomType
 	 *
 	 */
-	socket.on('createRoom', (userInfo) => {
-		if ( ! userInfo) return;
+	socket.on('createRoom', (data) => {
+		if ( ! data) return;
 		roomId = generateUniqueString(5);
-		username = userInfo.username;
+		username = data.username;
 		isOwner = true;
 		if ( ! username) return;
 		gamerooms[roomId] = new Room(roomId, username);
@@ -55,9 +56,7 @@ module.exports = (io) => (socket) => {
 				gamerooms[roomId].addPlayer(username);
 				socket.join(roomId);
 				socket.emit('roomId', {roomId, isOwner});
-				io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
-				for (let teamKey in gamerooms[roomId].teams)
-					socket.emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
+				socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
 				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');
 			}
@@ -69,15 +68,13 @@ module.exports = (io) => (socket) => {
 	socket.on('joinTeam', (teamName) => {
 		if ( ! roomId || ! username) return;
 		if (gamerooms[roomId].addToTeam(username, teamName))
-			for (let teamKey in gamerooms[roomId].teams)
-				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
+			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 	});
 
 	socket.on('leadTeam', (teamName) => {
 		if ( ! roomId || ! username) return;
 		if (gamerooms[roomId].addLeader(username, teamName))
-			for (let teamKey in gamerooms[roomId].teams)
-				io.sockets.in(roomId).emit('updateTeam', gamerooms[roomId].teams[teamKey].get());
+			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 	});
 
 	/**
@@ -149,20 +146,11 @@ module.exports = (io) => (socket) => {
 
 	socket.on('disconnect', (reason) => {
 		if (roomId && gamerooms[roomId]) {
-			if (--gamerooms[roomId].players[username].numConnections <= 0) {
-				let team = gamerooms[roomId].players[username].team;
-				if (team && gamerooms[roomId].isPlayerLeader(username)) {
-					team.removeLeader();
-				}
-				gamerooms[roomId].players[username].removeFromTeam();
-				delete gamerooms[roomId].players[username];
-				if (isEmpty(gamerooms[roomId].players))
-					delete gamerooms[roomId];
-				else {
-					if (team) socket.to(roomId).emit('updateTeam', team.get());
-					socket.to(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
-					socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
-				}
+			if (gamerooms[roomId].removePlayer(username) && isEmpty(gamerooms[roomId].players))
+				delete gamerooms[roomId];
+			else {
+				socket.to(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+				socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
 			}
 			socket.leave(roomId);
 		}

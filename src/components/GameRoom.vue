@@ -11,7 +11,7 @@
         />
       </h1>
       <template v-else>
-       <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
+        <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
       </template>
       <div class="start-container">
         <button v-if="isOwner && ! isGameRunning"
@@ -47,10 +47,12 @@
       <div id="role_select" v-if=" ! isGameRunning">
         <TeamSelect
           name="Blue"
+          :allPlayers="players"
           @updated="(blueHasMinimum) => {this.blueHasMinimum = blueHasMinimum;}"
         />
         <TeamSelect
           name="Red"
+          :allPlayers="players"
           @updated="(redHasMinimum) => {this.redHasMinimum = redHasMinimum;}"
         />
       </div>
