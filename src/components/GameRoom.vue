@@ -19,7 +19,7 @@
           @click="startGame">
           Start Game
         </button>
-        <button v-else-if="isOwner && isGameRunning && ( ! teamScore.Blue || ! teamScore.Red)"
+        <button v-else-if="isOwner && isGameRunning && teamScore && ( ! teamScore.Blue || ! teamScore.Red)"
           @click="restartGame"
         >
           Restart Game
@@ -56,7 +56,7 @@
           @updated="(redHasMinimum) => {this.redHasMinimum = redHasMinimum;}"
         />
       </div>
-      <GameBoard v-else
+      <GameBoard v-else-if=" !! currentTeamName"
         :cards="cards"
         :username="username"
         :isLeader="isLeader"
@@ -96,8 +96,6 @@ export default {
       cards: [],
       clue: null,
       numGuesses: null,
-      currentTeamName: null,
-      teamScore: null,
       canPass: false,
       blueHasMinimum: false,
       redHasMinimum: false,
@@ -128,8 +126,6 @@ export default {
       this.cards = gameboard.wordCards;
       this.clue = gameboard.clue;
       this.numGuesses = gameboard.numGuesses;
-      this.currentTeamName = gameboard.currentTeamName;
-      this.teamScore = gameboard.teamScore;
       this.canPass = gameboard.canPass;
     },
     giveClue(clue) {
@@ -143,10 +139,7 @@ export default {
       this.cards = [];
       this.clue = null;
       this.numGuesses = null;
-      this.currentTeamName = null;
-      this.teamScore = null;
       this.canPass = false;
-      this.isGameRunning = false;
       this.blueHasMinimum = false;
       this.redHasMinimum = false;
     },
@@ -164,6 +157,8 @@ export default {
     ...mapState('game', [
       'players',
       'isGameRunning',
+      'currentTeamName',
+      'teamScore',
     ]),
     ...mapGetters('game', [
       'isLeader',

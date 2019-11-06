@@ -4,6 +4,8 @@ export default {
     isGameRunning: false,
     players: {},
     username: '',
+    currentTeamName: null,
+    teamScore: null,
   },
   mutations: {
     setUsername(state, u) {
@@ -15,13 +17,16 @@ export default {
     },
     restartGame(state) {
       state.isGameRunning = false;
+      state.currentTeamName = null;
+      state.teamScore = null;
     },
-    SOCKET_restartGame(state) {
-      state.players = {};
-    },
-    updatePlayers: (state, players) => {
+    updatePlayers(state, players) {
       state.players = players;
     },
+    SOCKET_getGameState(state, {currentTeamName, teamScore}) {
+      state.currentTeamName = currentTeamName;
+      state.teamScore = teamScore;
+    }
   },
   actions: {
     socket_startGame(context, players) {
