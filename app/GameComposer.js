@@ -1,6 +1,7 @@
 'use strict';
 
 const Room = require('./Room');
+const GameBoard = require('./GameBoard');
 const generateUniqueString = require('random-id');
 
 const gamerooms = {};
@@ -13,6 +14,7 @@ module.exports = (io) => (socket) => {
 	let roomId = null;
 	let username = null;
 	let isOwner = null;
+	let roomType = null;
 
 	/**
 	 *
@@ -25,8 +27,9 @@ module.exports = (io) => (socket) => {
 		roomId = generateUniqueString(5);
 		username = data.username;
 		isOwner = true;
+		roomType = data.roomType;
 		if ( ! username) return;
-		gamerooms[roomId] = new Room(roomId, username);
+		gamerooms[roomId] = new Room(roomId, username, new GameBoard());
 		socket.join(roomId);
 		socket.emit('roomId', {roomId, isOwner});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
@@ -124,8 +127,10 @@ module.exports = (io) => (socket) => {
 
 	socket.on('restartGame', () => {
 		if ( ! roomId || ! username) return;
-		if (gamerooms[roomId].restartRoom())
+		if (gamerooms[roomId].restartRoom(new GameBoard())) {
 			io.sockets.in(roomId).emit('restartGame');
+			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+		}
 	});
 
 	socket.on('getGameState', () => {

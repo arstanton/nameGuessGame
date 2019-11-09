@@ -49,17 +49,17 @@ module.exports = class GameBoard {
 		this.canPass = false;
 	}
 
-	getBoard(isLeader) {
+	getBoard(player) {
 		return Object.assign({}, this, {
-			wordCards: this.getWordCards(isLeader),
+			wordCards: this.getWordCards(player),
 		});
 	}
 
-	getWordCards(isLeader) {
-		if (isLeader)
+	getWordCards(player) {
+		if (player.isLeader)
 			return this.wordCards;
 		else
-			return this.wordCards.map(wordCard => wordCard.getWordCard(isLeader));
+			return this.wordCards.map(wordCard => wordCard.getWordCard(player));
 	}
 
 	giveClue(clue, numGuesses) {

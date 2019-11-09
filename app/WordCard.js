@@ -11,12 +11,12 @@ module.exports = class WordCard {
 		this.revealed = true;
 	}
 
-	getWordCard(isLeader = false) {
+	getWordCard(player) {
 		let card = {
 			word: this.word,
 			revealed: this.revealed,
 		};
-		if (this.revealed || isLeader)
+		if (this.revealed || player.isLeader)
 			card.type = this.type;
 		return card;
 	}

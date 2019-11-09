@@ -1,11 +1,10 @@
 'use strict';
 
-const GameBoard = require('./GameBoard');
 const Teams = require('./Teams');
 const Player = require('./Player');
 
 module.exports = class Room {
-	constructor(roomId, username) {
+	constructor(roomId, username, gameboard) {
 		this.endtime = true;
 		this.players = {};
 		this.addPlayer(username);
@@ -13,11 +12,11 @@ module.exports = class Room {
 			[Teams.RED]: null,
 			[Teams.BLUE]: null,
 		};
-		this.gameboard = new GameBoard();
+		this.gameboard = gameboard;
 		this.roomId = roomId;
 	}
 
-	restartRoom() {
+	restartRoom(gameboard) {
 		if ( ! this.gameboard.isGameOver()) return false;
 		this.leaders = {
 			[Teams.RED]: null,
@@ -25,7 +24,7 @@ module.exports = class Room {
 		};
 		for (let playerKey in this.players)
 			this.players[playerKey].resetTeam();
-		this.gameboard = new GameBoard();
+		this.gameboard = gameboard;
 		return true;
 	}
 
@@ -98,7 +97,7 @@ module.exports = class Room {
 	}
 
 	getGameStateFor(username) {
-		return this.gameboard.getBoard(this.isPlayerLeader(username));
+		return this.gameboard.getBoard(this.players[username]);
 	}
 
 	hasEnoughPlayers() {
