@@ -2,12 +2,17 @@
 
 const Room = require('./Room');
 const GameBoard = require('./GameBoard');
+const GameBoardCoop = require('./GameBoardCoop');
 const generateUniqueString = require('random-id');
 
 const gamerooms = {};
 
 function isEmpty(obj) {
 	return Object.keys(obj).length === 0 && obj.constructor === Object;
+}
+
+function createGameBoard(roomType) {
+	return roomType === 'vs' ? new GameBoard() : new GameBoardCoop();
 }
 
 module.exports = (io) => (socket) => {
@@ -29,7 +34,7 @@ module.exports = (io) => (socket) => {
 		isOwner = true;
 		roomType = data.roomType;
 		if ( ! username) return;
-		gamerooms[roomId] = new Room(roomId, username, new GameBoard());
+		gamerooms[roomId] = new Room(roomId, username, createGameBoard(roomType));
 		socket.join(roomId);
 		socket.emit('roomId', {roomId, isOwner});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
@@ -127,7 +132,7 @@ module.exports = (io) => (socket) => {
 
 	socket.on('restartGame', () => {
 		if ( ! roomId || ! username) return;
-		if (gamerooms[roomId].restartRoom(new GameBoard())) {
+		if (gamerooms[roomId].restartRoom(createGameBoard(roomType))) {
 			io.sockets.in(roomId).emit('restartGame');
 			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
 		}

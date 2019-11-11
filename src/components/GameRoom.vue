@@ -10,6 +10,9 @@
           readonly
         />
       </h1>
+      <template v-else-if="typeof teamScore === 'number'">
+        <h1><b>{{ teamScore || 'Win' }}</b></h1>
+      </template>
       <template v-else>
         <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
       </template>
@@ -150,6 +153,10 @@ export default {
     },
     winMessage() {
       if ( ! this.teamScore) return null;
+      if (typeof this.teamScore === 'number') {
+        if (this.teamScore === 0) return 'You Win';
+        return null;
+      }
       for (const [team, score] of Object.entries(this.teamScore))
         if (score === 0)
           return `${team} Wins`;

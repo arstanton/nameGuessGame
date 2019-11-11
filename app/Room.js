@@ -54,7 +54,7 @@ module.exports = class Room {
 			const player = this.players[username];
 			const team = player.team;
 			if (team) {
-				if (this.isPlayerLeader(username))
+				if (this.gameboard.needsLeaders && this.isPlayerLeader(username))
 					this.leaders[player.team] = null;
 			}
 			delete this.players[username];
@@ -82,17 +82,17 @@ module.exports = class Room {
 	}
 
 	giveClue(username, clue) {
-		if ( ! this.isPlayerLeader(username) || ! this.isTeamTurn(username)) return false;
+		if (this.gameboard.needsLeaders && ! this.isPlayerLeader(username) || ! this.isTeamTurn(username)) return false;
 		return this.gameboard.giveClue(clue.clue, clue.numGuesses);
 	}
 
 	chooseCard(username, i) {
-		if (this.isPlayerLeader(username) || ! this.isPlayerTurn(username)) return false;
+		if (this.gameboard.needsLeaders && this.isPlayerLeader(username) || ! this.isPlayerTurn(username)) return false;
 		return this.gameboard.chooseCard(i);
 	}
 
 	passTurn(username) {
-		if (this.isPlayerLeader(username) || ! this.isPlayerTurn(username)) return false;
+		if (this.gameboard.needsLeaders && this.isPlayerLeader(username) || ! this.isPlayerTurn(username)) return false;
 		return this.gameboard.passTurn();
 	}
 
@@ -103,7 +103,7 @@ module.exports = class Room {
 	hasEnoughPlayers() {
 		for (let team of Object.values(Teams)) {
 			const teamHasPlayer = Object.values(this.players).find(p => p.team === team)
-			if ( ! this.leaders[team] || ! teamHasPlayer)
+			if (this.gameboard.needsLeaders && ! this.leaders[team] || ! teamHasPlayer)
 				return false;
 		}
 		return true;
