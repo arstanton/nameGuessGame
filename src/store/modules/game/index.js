@@ -6,6 +6,7 @@ export default {
     username: '',
     currentTeamName: null,
     teamScore: null,
+    timerTokens: null,
   },
   mutations: {
     setUsername(state, u) {
@@ -23,9 +24,10 @@ export default {
     updatePlayers(state, players) {
       state.players = players;
     },
-    SOCKET_getGameState(state, {currentTeamName, teamScore}) {
+    SOCKET_getGameState(state, {currentTeamName, teamScore, timerTokens}) {
       state.currentTeamName = currentTeamName;
       state.teamScore = teamScore;
+      state.timerTokens = timerTokens;
     }
   },
   actions: {

@@ -5,7 +5,7 @@
       @click="$emit('click', index)"
       class="card">
       <div class="front face">
-        <b>{{ card.word }}</b>
+        <span v-if="card.wrong">✖️</span><b>{{ card.word }}</b>
       </div>
       <div class="back face" :class="`${card.type}${card.revealed}`">
       </div>

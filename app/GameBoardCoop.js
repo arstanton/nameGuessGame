@@ -15,7 +15,8 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 
 	initScore() {
 		this.teamScore = 15;
-		this.gameOver = false;
+		this.timerTokens = 9;
+		this.teamIsDone = null;
 	}
 
 	initCards() {
@@ -86,9 +87,18 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 		});
 	}
 
+	setNewTurnState() {
+		super.setNewTurnState();
+		const oppositeTeam = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
+		if (this.teamIsDone === this.currentTeamName)
+			this.toggleTeam();
+		this.timerTokens--;
+	}
+
 	giveClue(clue, numGuesses) {
 		if (super.giveClue(clue, numGuesses)) {
 			this.toggleTeam();
+			this.canPass = true;
 			return true;
 		}
 		return false;
@@ -102,18 +112,19 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 
 		if ( ! card.reveal(this.currentTeamName))
 			return false;
-		this.canPass = true;
 		this.numGuesses--;
 
 		const oppositeTeam = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
 		if (card.type[oppositeTeam] === oppositeTeam) {
 			if (--this.teamScore === 0)
 				this.revealAllCards();
+			else
+				this.isTeamDone(oppositeTeam);
 			return true;
 		}
 
 		if (card.type[oppositeTeam] === 'Lose') {
-			this.gameOver = true;
+			this.timerTokens = 0;
 			this.revealAllCards();
 			return true;
 		}
@@ -122,14 +133,31 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 		return true;
 	}
 
+	isTeamDone(team) {
+		if (this.teamIsDone === team) return true;
+		for (let card of this.wordCards)
+			if (card.type[team] === team && ! card.teamThatRevealed)
+				return false;
+		this.teamIsDone = team;
+		return true;
+	}
+
 	isGameOver() {
-		return ! this.teamScore || this.gameOver;
+		return ! this.teamScore || ! this.timerTokens;
 	}
 
 	revealAllCards() {
 		this.wordCards.forEach((card) => {
 			card.reveal();
 		});
+	}
+
+	passTurn() {
+		if (this.canPass) {
+			this.setNewTurnState();
+			return true;
+		}
+		return false;
 	}
 
 	toggleTeam() {

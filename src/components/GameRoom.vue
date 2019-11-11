@@ -1,7 +1,7 @@
 <template>
   <div id="game_room">
     <div id="side_bar">
-      <h1 v-if=" ! teamScore">
+      <h1 v-if=" ! teamScore && typeof teamScore !== 'number'">
         <span id="copy" @click="copyKeyLink">📋</span>
         <input
           id="key"
@@ -11,7 +11,7 @@
         />
       </h1>
       <template v-else-if="typeof teamScore === 'number'">
-        <h1><b>{{ teamScore || 'Win' }}</b></h1>
+        <h1><b>{{ teamScore || 'Win' }}</b> - <b>{{ timerTokens || 'Lose' }}</b></h1>
       </template>
       <template v-else>
         <h1><b class="blue">{{ teamScore.Blue || 'Win' }}</b><b> - </b><b class="red">{{ teamScore.Red || 'Win' }}</b></h1>
@@ -22,12 +22,19 @@
           @click="startGame">
           Start Game
         </button>
-        <button v-else-if="isOwner && isGameRunning && teamScore && ( ! teamScore.Blue || ! teamScore.Red)"
+        <button v-else-if="
+          isOwner && isGameRunning
+          && (
+            typeof teamScore === 'number' && ( ! teamScore || ! timerTokens)
+            ||
+            teamScore && ( ! teamScore.Blue || ! teamScore.Red) && teamScore.Blue !== undefined
+          )
+        "
           @click="restartGame"
         >
           Restart Game
         </button>
-        <button v-else-if="isGameRunning && ! isLeader"
+        <button v-else-if="isGameRunning && ( ! isLeader || timerTokens)"
           :disabled=" ! canPass"
           @click="passTurn">
           Pass
@@ -155,6 +162,7 @@ export default {
       if ( ! this.teamScore) return null;
       if (typeof this.teamScore === 'number') {
         if (this.teamScore === 0) return 'You Win';
+        if (this.timerTokens === 0) return 'You Lose';
         return null;
       }
       for (const [team, score] of Object.entries(this.teamScore))
@@ -166,6 +174,7 @@ export default {
       'isGameRunning',
       'currentTeamName',
       'teamScore',
+      'timerTokens',
     ]),
     ...mapGetters('game', [
       'isLeader',
