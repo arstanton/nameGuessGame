@@ -51,17 +51,20 @@
         :numGuesses="numGuesses"
         :currentTeamName="currentTeamName"
         :winMessage="winMessage"
+        :needsLeaders="needsLeaders"
       />
     </div>
     <div id="play_space">
       <div id="role_select" v-if=" ! isGameRunning">
         <TeamSelect
           name="Blue"
+          :needsLeaders="needsLeaders"
           :allPlayers="players"
           @updated="(blueHasMinimum) => {this.blueHasMinimum = blueHasMinimum;}"
         />
         <TeamSelect
           name="Red"
+          :needsLeaders="needsLeaders"
           :allPlayers="players"
           @updated="(redHasMinimum) => {this.redHasMinimum = redHasMinimum;}"
         />
@@ -72,6 +75,7 @@
         :isLeader="isLeader"
         :players="players"
         :currentTeamName="currentTeamName"
+        :showPointers="needsLeaders"
         @click="chooseCard"
       />
     </div>
@@ -97,6 +101,7 @@ export default {
     username: String,
     roomId: String,
     isOwner: Boolean,
+    roomType: String,
   },
   mounted() {
     this.$router.push({ path: `/${this.roomId}` });
@@ -168,6 +173,10 @@ export default {
       for (const [team, score] of Object.entries(this.teamScore))
         if (score === 0)
           return `${team} Wins`;
+    },
+    needsLeaders() {
+      if (this.roomType === 'vs') return true;
+      return false;
     },
     ...mapState('game', [
       'players',

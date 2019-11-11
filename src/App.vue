@@ -17,6 +17,7 @@
       :username="username"
       :roomId="roomId"
       :isOwner="isOwner"
+      :roomType="roomType"
     />
   </div>
 </template>
@@ -34,6 +35,7 @@ export default {
       username: '',
       roomId: this.$route.params.key || '',
       loggedIn: false,
+      roomType: null,
     };
   },
   methods: {
@@ -51,10 +53,11 @@ export default {
     },
   },
   sockets: {
-    roomId({roomId, isOwner}) {
+    roomId({roomId, isOwner, roomType}) {
       this.roomId = roomId;
       this.isOwner = isOwner;
       this.loggedIn = true;
+      this.roomType = roomType;
     },
   },
 }

@@ -16,37 +16,35 @@
         {{ currentTeamName }} Turn
       </template>
     </h2>
-    <form onsubmit="return false">
-      <template v-if=" ! isGameRunning || ! isLeader || winMessage">
-        <div>
-          <input
-            v-model="message"
-            class="message_input"
-            autocomplete="off"
-          />
-        </div>
-        <button @click="sendMessage">↵</button>
-      </template>
-      <template v-else>
-        <div>
-          <input
-            ref="clue"
-            v-model="localClue"
-            class="clue_input"
-            autocomplete="off"
-            placeholder="Clue"
-          />
-          <input
-            ref="numGuesses"
-            v-model="localNumGuesses"
-            class="num_input"
-            type="number"
-            autocomplete="off"
-            placeholder="#"
-          />
-        </div>
-        <button @click="giveClue">↵</button>
-      </template>
+    <form onsubmit="return false" v-if=" ! isGameRunning || ! needsLeaders || ! isLeader || winMessage">
+      <div>
+        <input
+          v-model="message"
+          class="message_input"
+          autocomplete="off"
+        />
+      </div>
+      <button @click="sendMessage">↵</button>
+    </form>
+    <form onsubmit="return false" v-if="isGameRunning && ( ! needsLeaders || isLeader)">
+      <div>
+        <input
+          ref="clue"
+          v-model="localClue"
+          class="clue_input"
+          autocomplete="off"
+          placeholder="Clue"
+        />
+        <input
+          ref="numGuesses"
+          v-model="localNumGuesses"
+          class="num_input"
+          type="number"
+          autocomplete="off"
+          placeholder="#"
+        />
+      </div>
+      <button @click="giveClue">↵</button>
     </form>
   </div>
 </template>
@@ -71,6 +69,7 @@ export default {
       type: Number,
       default: null,
     },
+    needsLeaders: Boolean,
   },
   data() {
     return {

@@ -34,9 +34,9 @@ module.exports = (io) => (socket) => {
 		isOwner = true;
 		roomType = data.roomType;
 		if ( ! username) return;
-		gamerooms[roomId] = new Room(roomId, username, createGameBoard(roomType));
+		gamerooms[roomId] = new Room(roomId, username, roomType, createGameBoard(roomType));
 		socket.join(roomId);
-		socket.emit('roomId', {roomId, isOwner});
+		socket.emit('roomId', {roomId, isOwner, roomType});
 		socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 		gamerooms[roomId].startTimer((seconds) => {
 			socket.emit('log', seconds);
@@ -63,7 +63,8 @@ module.exports = (io) => (socket) => {
 			} else {
 				gamerooms[roomId].addPlayer(username);
 				socket.join(roomId);
-				socket.emit('roomId', {roomId, isOwner});
+				roomType = gamerooms[roomId].roomType;
+				socket.emit('roomId', {roomId, isOwner, roomType});
 				socket.emit('updatePlayers', gamerooms[roomId].getPlayers());
 				socket.emit('roomMsg', 'Thanks for connecting ' + username + ' :)');
 				socket.to(roomId).emit('roomMsg', username + ' has connected, be nice');

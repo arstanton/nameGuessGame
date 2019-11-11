@@ -48,6 +48,7 @@ export default {
     players: Object,
     username: String,
     currentTeamName: String,
+    showPointers: Boolean,
   },
   data() {
     return {
@@ -62,6 +63,7 @@ export default {
       });
     }).throttle(30),
     getUpdatedPointers() {
+      if ( ! this.showPointers) return {};
       return Object.keys(this.players)
       .filter(key => {
         return ! this.players[key].isLeader && this.players[key].name !== this.username && this.players[key].teamName && this.players[key].teamName === this.currentTeamName;
@@ -82,7 +84,7 @@ export default {
     }
   },
   mounted() {
-    if ( ! this.isLeader) {
+    if ( ! this.isLeader && this.showPointers) {
       this.$refs.gameboard.addEventListener('mousemove', this.mousemove);
     }
   },

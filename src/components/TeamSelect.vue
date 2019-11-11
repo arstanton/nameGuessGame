@@ -1,7 +1,7 @@
 <template>
   <div class="team-select" :class="name.toLowerCase()">
     <h1>{{ name }}</h1>
-    <div class="leader" @click="leadTeam">
+    <div v-if="needsLeaders" class="leader" @click="leadTeam">
       <h2>Leader: {{ leader ? leader.name : null }}</h2>
     </div>
     <div class="players" @click="joinTeam">
@@ -19,6 +19,7 @@ export default {
   name: 'TeamSelect',
   props: {
     name: String,
+    needsLeaders: Boolean,
     allPlayers: Object,
   },
   computed: {
@@ -29,7 +30,7 @@ export default {
       return this.players.find((p) => p.isLeader === true);
     },
     hasMinimumPlayers() {
-      return this.leader && this.players && this.players.length > 0;
+      return ( ! this.needsLeaders || this.leader) && this.players && this.players.length > 0;
     },
   },
   watch: {
