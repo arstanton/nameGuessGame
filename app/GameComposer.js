@@ -76,8 +76,16 @@ module.exports = (io) => (socket) => {
 
 	socket.on('joinTeam', (teamName) => {
 		if ( ! roomId || ! username) return;
-		if (gamerooms[roomId].addToTeam(username, teamName))
+		if (roomType === 'coop') {
+			let player = gamerooms[roomId].players[username];
+			socket.leave(`${roomId}${player.team}`);
+		}
+		if (gamerooms[roomId].addToTeam(username, teamName)) {
 			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+			if (roomType === 'coop') {
+				socket.join(`${roomId}${teamName}`);
+			}
+		}
 	});
 
 	socket.on('leadTeam', (teamName) => {
@@ -119,7 +127,12 @@ module.exports = (io) => (socket) => {
 	socket.on('sendMessage', (msg) => {
 		if (msg.roomId !== roomId) return;
 		try {
-			io.sockets.in(msg.roomId).emit('updateChat', {username, message: msg.message});
+			let team = gamerooms[roomId].players[username].team;
+			if (roomType === 'coop' && team) {
+				io.sockets.in(`${roomId}${team}`).emit('updateChat', {username, message: msg.message});
+			} else {
+				io.sockets.in(msg.roomId).emit('updateChat', {username, message: msg.message});
+			}
 		} catch (e) {
 			console.log("ERROR " + e.message);
 		}
@@ -127,15 +140,20 @@ module.exports = (io) => (socket) => {
 
 	socket.on('startGame', () => {
 		if ( ! roomId || ! username) return;
-		if (isOwner && gamerooms[roomId].hasEnoughPlayers())
+		if (isOwner && gamerooms[roomId].hasEnoughPlayers()) {
 			io.sockets.in(roomId).emit('startGame', gamerooms[roomId].getPlayers());
+		}
 	});
 
 	socket.on('restartGame', () => {
 		if ( ! roomId || ! username) return;
+		let team = gamerooms[roomId].players[username].team;
 		if (gamerooms[roomId].restartRoom(createGameBoard(roomType))) {
 			io.sockets.in(roomId).emit('restartGame');
 			io.sockets.in(roomId).emit('updatePlayers', gamerooms[roomId].getPlayers());
+			if (roomType === 'coop') {
+				socket.leave(`${roomId}${team}`);
+			}
 		}
 	});
 
@@ -157,6 +175,7 @@ module.exports = (io) => (socket) => {
 
 	socket.on('disconnect', (reason) => {
 		if (roomId && gamerooms[roomId]) {
+			let team = gamerooms[roomId].players[username].team;
 			if (gamerooms[roomId].removePlayer(username) && isEmpty(gamerooms[roomId].players))
 				delete gamerooms[roomId];
 			else {
@@ -164,6 +183,9 @@ module.exports = (io) => (socket) => {
 				socket.to(roomId).emit('roomMsg', username + 'has disconnected.');
 			}
 			socket.leave(roomId);
+			if (roomType === 'coop') {
+				socket.leave(`${roomId}${team}`);
+			}
 		}
 	});
 };
