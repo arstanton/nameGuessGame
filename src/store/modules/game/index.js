@@ -1,10 +1,11 @@
 export default {
   namespaced: true,
   state: {
+    canGiveClue: false,
+    currentTeamName: null,
     isGameRunning: false,
     players: {},
     username: '',
-    currentTeamName: null,
     teamScore: null,
     timerTokens: null,
   },
@@ -24,8 +25,11 @@ export default {
     updatePlayers(state, players) {
       state.players = players;
     },
-    SOCKET_getGameState(state, {currentTeamName, teamScore, timerTokens}) {
-      state.currentTeamName = currentTeamName;
+    SOCKET_getGameState(state, {currentTeamName, canGiveClue, teamScore, timerTokens}) {
+      if (state.canGiveClue === false && canGiveClue === true) {
+        state.currentTeamName = currentTeamName;
+      }
+      state.canGiveClue = canGiveClue;
       state.teamScore = teamScore;
       state.timerTokens = timerTokens;
     }

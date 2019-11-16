@@ -65,11 +65,11 @@ export default {
     }).throttle(30),
     getUpdatedPointers() {
       if ( ! this.showPointers) return {};
-      return Object.keys(this.players)
-      .filter(key => {
-        return ! this.players[key].isLeader && this.players[key].name !== this.username && this.players[key].teamName && (this.players[key].teamName === this.currentTeamName && this.roomType === 'vs' || this.players[this.username].teamName === this.players[key].teamName);
-      })
-      .reduce((obj, key) => {
+      return Object.keys(this.players).filter(
+        key => {
+          return ! this.players[key].isLeader && this.players[key].name !== this.username && this.players[key].teamName && (this.players[key].teamName === this.currentTeamName && this.roomType === 'vs' || this.players[this.username].teamName === this.players[key].teamName && this.roomType === 'coop');
+        }
+      ).reduce((obj, key) => {
         obj[key] = Object.assign({}, this.players[key]);
         obj[key].pointer = obj[key].teamName === 'Red' ? '🔴' : '🔵';
         return obj;

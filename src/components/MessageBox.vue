@@ -81,8 +81,10 @@ export default {
   },
   methods: {
     sendMessage() {
-      this.$socket.emit('sendMessage', {message: this.message, roomId: this.roomId});
-      this.message = '';
+      if (this.message) {
+        this.$socket.emit('sendMessage', {message: this.message, roomId: this.roomId});
+        this.message = '';
+      }
     },
     giveClue() {
       if (this.localClue === null || this.localClue === '') {
@@ -132,6 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  overflow-y: auto;
 }
 h2 {
   text-transform: uppercase;

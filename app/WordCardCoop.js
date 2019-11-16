@@ -16,11 +16,7 @@ module.exports = class WordCardCoop extends WordCard {
 			if (this.teamTouched.has(team)) return false;
 			this.teamTouched.add(team);
 			const oppositeTeam = team == Teams.RED ? Teams.BLUE : Teams.RED;
-			if (
-				this.type[oppositeTeam] === oppositeTeam
-				|| this.type[oppositeTeam] === 'Wrong'
-				&& this.type[team] === 'Wrong'
-			) {
+			if (this.type[oppositeTeam] === oppositeTeam) {
 				this.teamThatRevealed = team;
 			}
 		} else {
@@ -33,9 +29,9 @@ module.exports = class WordCardCoop extends WordCard {
 		const oppositeTeam = player.team == Teams.RED ? Teams.BLUE : Teams.RED;
 		let card = {
 			word: this.word,
-			revealed: !! this.teamThatRevealed || this.revealed,
+			revealed: !! this.teamThatRevealed || this.revealed || this.teamTouched.has(player.team) && this.type[player.team] !== player.team,
 			type: this.type[player.team],
-			wrong: this.teamTouched.has(player.team) && this.type[oppositeTeam] === 'Wrong',
+			wrong: this.teamTouched.has(player.team) && this.type[oppositeTeam] === 'Wrong' || this.teamTouched.has(oppositeTeam) && this.type[player.team] === 'Wrong',
 		};
 		if ( !! this.teamThatRevealed) {
 			const revealedTeam = this.teamThatRevealed == Teams.RED ? Teams.BLUE : Teams.RED;
