@@ -167,10 +167,14 @@ module.exports = (io) => (socket) => {
 			! roomId ||
 			! username ||
 			gamerooms[roomId].isPlayerLeader(username) ||
-			! gamerooms[roomId].isTeamTurn(username)
+			! gamerooms[roomId].isTeamTurn(username) && roomType === 'vs'
 		)
 			return;
-		return socket.to(roomId).emit("mousemove", {username, x: pos.x, y: pos.y});
+		let socketKey = roomId;
+		if (roomType === 'coop') {
+			socketKey += gamerooms[roomId].players[username].team;
+		}
+		return socket.to(socketKey).emit("mousemove", {username, x: pos.x, y: pos.y});
 	});
 
 	socket.on('disconnect', (reason) => {

@@ -49,6 +49,7 @@ export default {
     username: String,
     currentTeamName: String,
     showPointers: Boolean,
+    roomType: String,
   },
   data() {
     return {
@@ -66,7 +67,7 @@ export default {
       if ( ! this.showPointers) return {};
       return Object.keys(this.players)
       .filter(key => {
-        return ! this.players[key].isLeader && this.players[key].name !== this.username && this.players[key].teamName && this.players[key].teamName === this.currentTeamName;
+        return ! this.players[key].isLeader && this.players[key].name !== this.username && this.players[key].teamName && (this.players[key].teamName === this.currentTeamName && this.roomType === 'vs' || this.players[this.username].teamName === this.players[key].teamName);
       })
       .reduce((obj, key) => {
         obj[key] = Object.assign({}, this.players[key]);

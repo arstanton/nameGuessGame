@@ -75,7 +75,8 @@
         :isLeader="isLeader"
         :players="players"
         :currentTeamName="currentTeamName"
-        :showPointers="needsLeaders"
+        :showPointers="true"
+        :roomType="roomType"
         @click="chooseCard"
       />
     </div>
