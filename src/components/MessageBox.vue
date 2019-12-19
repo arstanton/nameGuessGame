@@ -24,7 +24,7 @@
           autocomplete="off"
         />
       </div>
-      <button @click="sendMessage">↵</button>
+      <button :class="myTeam && myTeam.toLowerCase()"@click="sendMessage">↵</button>
     </form>
     <form onsubmit="return false" v-if="isGameRunning && ( ! needsLeaders || isLeader)">
       <div>
@@ -44,7 +44,7 @@
           placeholder="#"
         />
       </div>
-      <button @click="giveClue">↵</button>
+      <button :class="myTeam && myTeam.toLowerCase()" @click="giveClue">↵</button>
     </form>
   </div>
 </template>
@@ -119,6 +119,7 @@ export default {
     ]),
     ...mapGetters('game', [
       'isLeader',
+      'myTeam',
     ]),
   },
 }
@@ -174,6 +175,9 @@ form button {
   border: none;
   padding: 10px;
   cursor: pointer;
+}
+form button.blue {
+  background: paleturquoise;
 }
 #messages {
   list-style-type: none;

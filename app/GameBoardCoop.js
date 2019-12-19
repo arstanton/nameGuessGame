@@ -116,16 +116,19 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 
 		const oppositeTeam = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
 		if (card.type[oppositeTeam] === oppositeTeam) {
-			if (--this.teamScore === 0)
+			if (--this.teamScore === 0) {
 				this.revealAllCards();
-			else
+				this.canPass = false;
+			} else {
 				this.isTeamDone(oppositeTeam);
+			}
 			return true;
 		}
 
 		if (card.type[oppositeTeam] === 'Lose') {
 			this.timerTokens = 0;
 			this.revealAllCards();
+			this.canPass = false;
 			return true;
 		}
 
@@ -144,12 +147,6 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 
 	isGameOver() {
 		return ! this.teamScore || ! this.timerTokens;
-	}
-
-	revealAllCards() {
-		this.wordCards.forEach((card) => {
-			card.reveal();
-		});
 	}
 
 	passTurn() {

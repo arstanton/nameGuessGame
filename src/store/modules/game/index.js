@@ -54,5 +54,8 @@ export default {
       if (state.players[state.username])
         return state.players[state.username].isLeader;
     },
+    myTeam: state => {
+      return state.players[state.username] && state.players[state.username].teamName;
+    },
   },
 };

@@ -50,4 +50,10 @@ module.exports = class GameBoard {
 		this.currentTeamName = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
 		this.setNewTurnState();
 	}
+
+	revealAllCards() {
+		this.wordCards.forEach((card) => {
+			card.reveal();
+		});
+	}
 }

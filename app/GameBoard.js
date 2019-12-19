@@ -92,10 +92,4 @@ module.exports = class GameBoard extends GameBoardBase {
 	isGameOver() {
 		return ! this.teamScore[Teams.BLUE] || ! this.teamScore[Teams.RED];
 	}
-
-	revealAllCards() {
-		this.wordCards.forEach((card) => {
-			card.reveal();
-		});
-	}
 }
