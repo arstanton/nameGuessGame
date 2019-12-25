@@ -89,7 +89,6 @@ module.exports = class GameBoardCoop extends GameBoardBase {
 
 	setNewTurnState() {
 		super.setNewTurnState();
-		const oppositeTeam = this.currentTeamName == Teams.RED ? Teams.BLUE : Teams.RED;
 		if (this.teamIsDone === this.currentTeamName)
 			this.toggleTeam();
 		this.timerTokens--;

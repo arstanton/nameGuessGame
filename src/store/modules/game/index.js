@@ -26,9 +26,7 @@ export default {
       state.players = players;
     },
     SOCKET_getGameState(state, {currentTeamName, canGiveClue, teamScore, timerTokens}) {
-      if (state.canGiveClue === false && canGiveClue === true) {
-        state.currentTeamName = currentTeamName;
-      }
+      state.currentTeamName = currentTeamName;
       state.canGiveClue = canGiveClue;
       state.teamScore = teamScore;
       state.timerTokens = timerTokens;
